@@ -206,7 +206,7 @@
 </div>
 </div>
 <!-- TikTok-style Category Tabs -->
-<div class="relative flex items-center px-2 pt-0.5 pb-0.5">
+<div class="relative flex items-center px-2 pt-0.5 pb-0.5" id="headerTabs">
 <div class="flex-1 flex items-center justify-center gap-2.5 overflow-x-auto px-6">
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="nearby" type="button">Near By You<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="specialty" type="button">Specialty<span class="tab-indicator"></span></button>
@@ -1309,6 +1309,8 @@
       });
       if (appHeader) {
         appHeader.classList.toggle('header-light', name !== 'home');
+        var tabsRow = document.getElementById('headerTabs');
+        if (tabsRow) { tabsRow.classList.toggle('hidden', name === 'you'); }
       }
       var bnavs = document.querySelectorAll('.bnav-item');
       bnavs.forEach(function (b) {
