@@ -176,7 +176,7 @@
 <div class="pt-1">
 <div class="flex items-center gap-2 h-10">
 <!-- Brand -->
-<h1 class="font-title text-[22px] font-bold leading-none tracking-tight text-white drop-shadow shrink-0 pl-3.5"><span class="bg-gradient-to-r from-[#5eead4] to-[#22d3ee] bg-clip-text text-transparent">Doctor</span> App</h1>
+<h1 class="font-title text-[22px] font-bold leading-none tracking-tight text-white drop-shadow shrink-0 pl-3.5 cursor-pointer select-none active:opacity-70 transition-opacity" id="brandHome" role="button" tabindex="0" aria-label="Go to Home"><span class="bg-gradient-to-r from-[#5eead4] to-[#22d3ee] bg-clip-text text-transparent">Doctor</span> App</h1>
 <!-- Updates pill: icon + marquee -->
 <div class="updates-pill flex-1 min-w-0 flex items-center gap-2 h-9 rounded-full pl-1 pr-3 overflow-hidden">
 <span class="updates-icon shrink-0 flex items-center justify-center"><i class="fa-solid fa-bullhorn text-[15px] text-rose-500"></i></span>
@@ -198,7 +198,6 @@
 <!-- TikTok-style Category Tabs -->
 <div class="relative flex items-center px-2 pt-0.5 pb-0.5">
 <div class="flex-1 flex items-center justify-center gap-2.5 overflow-x-auto px-6">
-<button class="tab-btn active shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="home" type="button">Home<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="doctor" type="button">Doctor<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="hospital" type="button">Hospital<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="specialty" type="button">Specialty<span class="tab-indicator"></span></button>
@@ -1041,6 +1040,14 @@
         showPage(tab.getAttribute('data-page'));
       });
     });
+
+    var brandHome = document.getElementById('brandHome');
+    if (brandHome) {
+      brandHome.addEventListener('click', function () { showPage('home'); });
+      brandHome.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPage('home'); }
+      });
+    }
 
     var searchBtn = document.getElementById('topSearchBtn');
     if (searchBtn) {
