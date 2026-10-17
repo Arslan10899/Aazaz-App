@@ -1214,6 +1214,11 @@
 <div class="min-w-0 flex-1"><h4 class="text-[13.5px] font-bold text-[#131b2e]">Settings</h4><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">Account and preferences</p></div>
 <i class="fa-solid fa-chevron-right text-[#8b9599] text-[11px] shrink-0"></i>
 </a>
+<a class="flex items-center gap-3.5 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 active:scale-[0.99] transition" href="#help" data-gopage="help">
+<div class="w-10 h-10 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-regular fa-circle-question text-[#00647c]"></i></div>
+<div class="min-w-0 flex-1"><h4 class="text-[13.5px] font-bold text-[#131b2e]">Help &amp; Support</h4><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">Get help and contact support</p></div>
+<i class="fa-solid fa-chevron-right text-[#8b9599] text-[11px] shrink-0"></i>
+</a>
 </div>
 <button class="w-full mt-4 flex items-center justify-center gap-2 bg-white border border-red-200 text-[#ba1a1a] rounded-2xl p-3.5 text-[13.5px] font-bold active:scale-[0.99] transition" type="button">
 <i class="fa-solid fa-right-from-bracket"></i>Logout
@@ -1250,12 +1255,7 @@
 <span class="bnav-label text-[10px] tracking-tight leading-none">Doctors</span>
 <div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
-<!-- Tab 5: Help & Support -->
-        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#help" data-navpage="help">
-          <i class="bnav-icon fa-regular fa-circle-question text-[18px] transition-colors"></i>
-          <span class="bnav-label text-[10px] tracking-tight text-center leading-3">Help &amp; Support</span>
-          <div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
-        </a>
+
         <!-- Tab 6: You (User Profile) -->
         <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#you" data-navpage="you">
           <i class="bnav-icon fa-solid fa-user text-[18px] transition-colors"></i>
@@ -1294,7 +1294,7 @@
       var bnavs = document.querySelectorAll('.bnav-item');
       bnavs.forEach(function (b) {
         var p = b.getAttribute('data-navpage');
-        b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile'));
+        b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile') || (p === 'you' && name === 'help'));
       });
       if (name === 'nearby') { loadNearby(); }
     }
@@ -1320,6 +1320,14 @@
         showPage(b.getAttribute('data-navpage'));
       });
     });
+
+    var youPanel = document.querySelector('[data-panel="you"]');
+    if (youPanel) {
+      youPanel.addEventListener('click', function (e) {
+        var go = e.target.closest('[data-gopage]');
+        if (go) { e.preventDefault(); showPage(go.getAttribute('data-gopage')); }
+      });
+    }
 
     var nbDocWrap = document.getElementById('nbDoctors');
     if (nbDocWrap) {
