@@ -48,6 +48,8 @@
       direction: rtl;
       line-height: 2;
     }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     /* Hide scrollbars */
     ::-webkit-scrollbar {
       display: none;
@@ -563,15 +565,15 @@
 <p class="text-[12.5px] font-semibold text-[#3e484d] mt-2.5" id="profileSpec">—</p>
 <div class="grid grid-cols-3 gap-2 mt-3.5">
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
-<span class="text-[15px] font-bold text-[#131b2e]" id="statRating">4.9</span>
+<span class="flex items-center gap-1 text-[15px] font-bold text-[#131b2e]"><i class="fa-solid fa-star text-amber-400 text-[13px]"></i><span id="statRating">4.9</span></span>
 <span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Rating</span>
 </div>
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
-<span class="text-[15px] font-bold text-[#131b2e]" id="statYears">9</span>
-<span class="text-[10px] font-medium text-[#6e797e] mt-0.5 flex items-center gap-1"><i class="fa-solid fa-briefcase-medical text-[#00647c]"></i>Yrs Exp.</span>
+<span class="flex items-center gap-1 text-[15px] font-bold text-[#131b2e]"><i class="fa-solid fa-briefcase-medical text-[#00647c] text-[13px]"></i><span id="statYears">9</span></span>
+<span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Yrs Exp.</span>
 </div>
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
-<span class="text-[15px] font-bold text-[#131b2e]" id="statReviews">1.2K</span>
+<span class="flex items-center gap-1 text-[15px] font-bold text-[#131b2e]"><i class="fa-solid fa-comment-dots text-[#00647c] text-[13px]"></i><span id="statReviews">1.2K</span></span>
 <span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Reviews</span>
 </div>
 </div>
@@ -579,30 +581,141 @@
 <h3 class="text-[13px] font-bold text-[#131b2e]">About</h3>
 <p class="text-[12px] leading-relaxed text-[#3e484d] mt-1.5" id="profileAbout">—</p>
 </div>
-<div class="mt-4 flex flex-col gap-2">
-<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
-<i class="fa-solid fa-location-dot text-[#00647c] w-4 text-center"></i>
-<span class="text-[12px] font-medium text-[#3e484d]" id="profileLoc">—</span>
+<div class="mt-4 mb-6">
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-[#00647c] text-white shadow-sm transition active:scale-95" data-ptab="hospitals" type="button">Hospitals</button>
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-white text-[#3e484d] border border-slate-200 transition active:scale-95" data-ptab="reviews" type="button">Reviews</button>
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-white text-[#3e484d] border border-slate-200 transition active:scale-95" data-ptab="qual" type="button">Qualifications</button>
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-white text-[#3e484d] border border-slate-200 transition active:scale-95" data-ptab="exp" type="button">Experience</button>
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-white text-[#3e484d] border border-slate-200 transition active:scale-95" data-ptab="service" type="button">Service</button>
+<button class="ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold bg-white text-[#3e484d] border border-slate-200 transition active:scale-95" data-ptab="diseases" type="button">Diseases</button>
 </div>
-<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
-<i class="fa-solid fa-hospital text-[#00647c] w-4 text-center"></i>
-<span class="text-[12px] font-medium text-[#3e484d]">Clinic fee: Rs. <span id="profileFee">—</span></span>
-</div>
-<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
-<i class="fa-solid fa-video text-[#00647c] w-4 text-center"></i>
-<span class="text-[12px] font-medium text-[#3e484d]">Online consult: Rs. <span id="profileOnline">—</span></span>
-</div>
-<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
-<i class="fa-solid fa-language text-[#00647c] w-4 text-center"></i>
-<span class="text-[12px] font-medium text-[#3e484d]">English, اردو</span>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-2.5 mt-4 mb-6">
-<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-[#00647c] hover:bg-[#004e61] active:scale-[0.98] text-white rounded-xl shadow-md transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold"><i class="fa-solid fa-hospital text-sm"></i><span>Clinic Check-up</span></div><span class="text-[11px] font-medium text-cyan-100">Rs. <span id="ctaFee">—</span></span></button>
-<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-white hover:bg-slate-50 active:scale-[0.98] rounded-xl border border-slate-200 shadow-sm transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold"><i class="fa-solid fa-video text-sm text-[#00647c]"></i><span class="text-[#131b2e]">Online Check-up</span></div><span class="text-[11px] font-semibold text-[#3e484d]">Rs. <span id="ctaOnline">—</span></span></button>
+<div class="ptab-panel mt-3.5" data-ptab-panel="hospitals">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+<div class="flex items-start gap-3">
+<div class="w-11 h-11 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-hospital text-[#00647c] text-lg"></i></div>
+<div class="min-w-0 flex-1">
+<h4 class="text-[14px] font-bold text-[#131b2e]" id="hmName">Hospital</h4>
+<p class="text-[11.5px] font-medium text-[#6e797e] mt-1 flex items-start gap-1.5"><i class="fa-solid fa-location-dot text-[#00647c] mt-0.5 shrink-0"></i><span id="hmAddr">-</span></p>
 </div>
 </div>
+<div class="flex items-center gap-2.5 mt-3.5 pt-3.5 border-t border-slate-100">
+<i class="fa-solid fa-money-bill-wave text-[#00647c] w-4 text-center"></i>
+<span class="text-[12px] font-medium text-[#3e484d]">Consultation fee: <span class="font-bold text-[#131b2e]">Rs. <span id="hmFee">-</span></span></span>
 </div>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mt-3">
+<h4 class="text-[12.5px] font-bold text-[#131b2e] flex items-center gap-2 mb-2"><i class="fa-regular fa-calendar text-[#00647c]"></i>Available Schedule</h4>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Monday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Tuesday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Wednesday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Thursday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Friday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 border-b border-slate-100 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Saturday</span><span class="font-bold text-[#131b2e]">11:00 AM - 02:00 PM</span></div>
+<div class="flex items-center justify-between py-2 text-[11.5px]"><span class="font-semibold text-[#3e484d]">Sunday</span><span class="font-bold text-rose-500">Closed</span></div>
+</div>
+<button class="w-full mt-3 py-3.5 bg-[#00647c] hover:bg-[#004e61] active:scale-[0.99] text-white rounded-xl shadow-md transition text-[13px] font-bold flex items-center justify-center gap-2" type="button"><i class="fa-regular fa-calendar-check"></i>Book Appointment</button>
+</div>
+<div class="ptab-panel mt-3.5 hidden" data-ptab-panel="reviews">
+<div class="flex flex-col gap-2.5">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-[#00647c]/10 flex items-center justify-center text-[#00647c] text-[13px] font-bold shrink-0">S</div>
+<div class="min-w-0 flex-1">
+<h5 class="text-[12.5px] font-bold text-[#131b2e]">Sarah M.</h5>
+<div class="flex items-center gap-0.5 mt-0.5 text-amber-400 text-[9px]"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span class="text-[#8b9599] font-semibold text-[10px] ml-1.5">2 days ago</span></div>
+</div>
+</div>
+<p class="text-[11.5px] leading-relaxed text-[#3e484d] mt-2.5">Very professional and attentive. Explained the diagnosis clearly and the staff was caring.</p>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-[#00647c]/10 flex items-center justify-center text-[#00647c] text-[13px] font-bold shrink-0">A</div>
+<div class="min-w-0 flex-1">
+<h5 class="text-[12.5px] font-bold text-[#131b2e]">Ahmed R.</h5>
+<div class="flex items-center gap-0.5 mt-0.5 text-amber-400 text-[9px]"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span class="text-[#8b9599] font-semibold text-[10px] ml-1.5">1 week ago</span></div>
+</div>
+</div>
+<p class="text-[11.5px] leading-relaxed text-[#3e484d] mt-2.5">Highly experienced and polite. The clinic was clean and waiting time was short.</p>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-[#00647c]/10 flex items-center justify-center text-[#00647c] text-[13px] font-bold shrink-0">H</div>
+<div class="min-w-0 flex-1">
+<h5 class="text-[12.5px] font-bold text-[#131b2e]">Hina K.</h5>
+<div class="flex items-center gap-0.5 mt-0.5 text-amber-400 text-[9px]"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><span class="text-[#8b9599] font-semibold text-[10px] ml-1.5">3 weeks ago</span></div>
+</div>
+</div>
+<p class="text-[11.5px] leading-relaxed text-[#3e484d] mt-2.5">Good consultation overall. Prescription was clear and follow-up advice was helpful.</p>
+</div>
+</div>
+</div>
+<div class="ptab-panel mt-3.5 hidden" data-ptab-panel="qual">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+<ul class="flex flex-col gap-3.5">
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-graduation-cap text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">MBBS</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">King Edward Medical University, Lahore</p></div>
+</li>
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-certificate text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">FCPS (Medicine)</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">College of Physicians &amp; Surgeons Pakistan</p></div>
+</li>
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-award text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">Diploma in Clinical Care</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">Royal College of Physicians, UK</p></div>
+</li>
+</ul>
+</div>
+</div>
+<div class="ptab-panel mt-3.5 hidden" data-ptab-panel="exp">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+<ul class="flex flex-col gap-3.5">
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-briefcase-medical text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">Senior Consultant</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">City Care Hospital, Lahore &middot; 2019 - Present</p></div>
+</li>
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-user-doctor text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">Registrar</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">Services Hospital, Lahore &middot; 2014 - 2019</p></div>
+</li>
+<li class="flex gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#00647c]/10 flex items-center justify-center shrink-0"><i class="fa-solid fa-hospital-user text-[#00647c]"></i></div>
+<div class="min-w-0"><h5 class="text-[12.5px] font-bold text-[#131b2e]">House Officer</h5><p class="text-[11px] font-medium text-[#6e797e] mt-0.5">Mayo Hospital, Lahore &middot; 2013 - 2014</p></div>
+</li>
+</ul>
+</div>
+</div>
+<div class="ptab-panel mt-3.5 hidden" data-ptab-panel="service">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">General Consultation</span>
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">Health Check-up</span>
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">Prescription</span>
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">Lab Reports Review</span>
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">Online Consultation</span>
+<span class="px-3 py-1.5 bg-[#00647c]/10 text-[#00647c] text-[11.5px] font-bold rounded-full">Follow-up Visit</span>
+</div>
+</div>
+</div>
+<div class="ptab-panel mt-3.5 hidden" data-ptab-panel="diseases">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Flu &amp; Fever</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Hypertension</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Diabetes</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Asthma</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Migraine</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Chest Infection</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Skin Allergy</span>
+<span class="px-3 py-1.5 bg-slate-100 text-[#3e484d] text-[11.5px] font-semibold rounded-full">Stomach Problems</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
 <!-- Page: Hospital (List - no image) -->
 <div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="hospital">
 <div class="flex items-center justify-between mb-3">
@@ -1254,6 +1367,19 @@
       if (el) { el.textContent = val; }
     }
 
+    function setProfileTab(key) {
+      var btns = document.querySelectorAll('.ptab-btn');
+      for (var i = 0; i < btns.length; i++) {
+        var on = btns[i].getAttribute('data-ptab') === key;
+        btns[i].className = 'ptab-btn shrink-0 px-3.5 py-1.5 rounded-full text-[11.5px] font-bold transition active:scale-95 ' + (on ? 'bg-[#00647c] text-white shadow-sm' : 'bg-white text-[#3e484d] border border-slate-200');
+      }
+      var panels = document.querySelectorAll('.ptab-panel');
+      for (var j = 0; j < panels.length; j++) {
+        var isOn = panels[j].getAttribute('data-ptab-panel') === key;
+        if (isOn) { panels[j].classList.remove('hidden'); } else { panels[j].classList.add('hidden'); }
+      }
+    }
+
     function openProfile(name) {
       var d = null;
       for (var i = 0; i < doctors.length; i++) {
@@ -1271,12 +1397,12 @@
       setText('statYears', d.yrs);
       setText('statReviews', d.reviews);
       setText('profileAbout', d.quote + ' ' + d.name + ' has ' + d.yrs + ' years of experience in ' + d.spec.toLowerCase() + ' care and has helped thousands of patients live healthier lives.');
-      setText('profileLoc', d.loc);
-      setText('profileFee', d.fee);
-      setText('profileOnline', d.online);
-      setText('ctaFee', d.fee);
-      setText('ctaOnline', d.online);
+      var locParts = (d.loc || '').split(',');
+      setText('hmName', (locParts[0] || d.loc || '').trim());
+      setText('hmAddr', d.loc);
+      setText('hmFee', d.fee);
       showPage('profile');
+      setProfileTab('hospitals');
       var profPanel = document.querySelector('.page-panel[data-panel="profile"]');
       if (profPanel) { profPanel.scrollTop = 0; }
     }
@@ -1294,6 +1420,11 @@
     var backBtn = document.getElementById('profileBack');
     if (backBtn) {
       backBtn.addEventListener('click', function () { showPage('doctor'); });
+    }
+
+    var ptabBtns = document.querySelectorAll('.ptab-btn');
+    for (var t = 0; t < ptabBtns.length; t++) {
+      ptabBtns[t].addEventListener('click', function () { setProfileTab(this.getAttribute('data-ptab')); });
     }
   })();
 </script>
