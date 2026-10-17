@@ -1230,43 +1230,40 @@
 </main>
 <!-- END: PagesContainer -->
 <!-- BEGIN: BottomNavigationDock -->
-<nav class="relative z-30 bg-white border-t border-slate-200 px-2 pt-1 pb-0.5 shadow-lg" data-purpose="mobile-navigation">
+<nav class="relative z-30 bg-white border-t border-slate-200/80 px-1.5 pt-1.5 pb-1 shadow-[0_-6px_20px_rgba(15,23,42,0.08)]" data-purpose="mobile-navigation">
 <div class="flex items-center justify-between text-[#6e797e]">
 <!-- Tab 1: Home -->
-        <a class="bnav-item active flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#home" data-navpage="home">
-<i class="bnav-icon fa-solid fa-house text-[18px] transition-colors"></i>
-<span class="bnav-label text-[10px] tracking-tight leading-none">Home</span>
-<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+        <a class="bnav-item active flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#home" data-navpage="home">
+<i class="bnav-icon fa-solid fa-house text-[19px] transition-colors"></i>
+<span class="bnav-label text-[9.5px] tracking-tight leading-none">Home</span>
+<div class="bnav-bar w-6 h-[3px] bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
 <!-- Tab 2: Hospitals -->
-        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#hospitals" data-navpage="hospital">
-<i class="bnav-icon fa-regular fa-hospital text-[18px] transition-colors"></i>
-<span class="bnav-label text-[10px] tracking-tight leading-none">Hospitals</span>
-<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+        <a class="bnav-item flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#hospitals" data-navpage="hospital">
+<i class="bnav-icon fa-regular fa-hospital text-[19px] transition-colors"></i>
+<span class="bnav-label text-[9.5px] tracking-tight leading-none">Hospitals</span>
+<div class="bnav-bar w-6 h-[3px] bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
 <!-- Tab 3 (Center Anchor): Join as Doctor -->
-<div class="relative -top-3.5 flex flex-col items-center shrink-0 mx-1">
-<button aria-label="Join as Doctor" class="flex items-center justify-center active:scale-95 transition transform" type="button">
-<img alt="Join as Doctor" class="h-12 w-auto object-contain drop-shadow-md" src="icon/dr-app-icon.png"/>
+<div class="relative -top-2.5 flex flex-col items-center shrink-0 px-1.5">
+<button aria-label="Join as Doctor" class="flex items-center justify-center active:scale-95 transition" type="button">
+<img alt="Join as Doctor" class="h-10 w-auto object-contain drop-shadow-md" src="icon/dr-app-icon.png"/>
 </button>
-<span class="text-[10px] font-bold text-[#131b2e] mt-0.5 tracking-tight text-center leading-3">Join as<br/>Doctor</span>
+<span class="text-[8.5px] font-bold text-[#131b2e] mt-1 tracking-tight leading-none whitespace-nowrap">Join as Doctor</span>
 </div>
 <!-- Tab 4: Doctors -->
-        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#doctors" data-navpage="doctor">
-<i class="bnav-icon fa-solid fa-user-doctor text-[18px] transition-colors"></i>
-<span class="bnav-label text-[10px] tracking-tight leading-none">Doctors</span>
-<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+        <a class="bnav-item flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#doctors" data-navpage="doctor">
+<i class="bnav-icon fa-solid fa-user-doctor text-[19px] transition-colors"></i>
+<span class="bnav-label text-[9.5px] tracking-tight leading-none">Doctors</span>
+<div class="bnav-bar w-6 h-[3px] bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
-
-        <!-- Tab 6: You (User Profile) -->
-        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#you" data-navpage="you">
+        <!-- Tab 5: You (User Profile) -->
+        <a class="bnav-item flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#you" data-navpage="you">
           <span class="bnav-icon inline-flex items-center justify-center"><img alt="You" class="bnav-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" loading="lazy" decoding="async"/></span>
-          <span class="bnav-label text-[10px] tracking-tight leading-none">You</span>
-          <div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+          <span class="bnav-label text-[9.5px] tracking-tight leading-none">You</span>
+          <div class="bnav-bar w-6 h-[3px] bg-[#00647c] rounded-full mt-0.5"></div>
         </a>
 </div>
-<!-- iOS Home Indicator / Gesture Bar -->
-<div class="w-24 h-1 bg-slate-300 rounded-full mx-auto mt-1"></div>
 </nav>
 <!-- END: BottomNavigationDock -->
 </div>
