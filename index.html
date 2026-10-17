@@ -64,6 +64,8 @@
     .bnav-item.active .bnav-icon { color: #00647c; }
     .bnav-item.active .bnav-label { color: #00647c; font-weight: 700; }
     .bnav-item.active .bnav-bar { display: block; }
+    .bnav-item .bnav-avatar { width: 22px; height: 22px; border-radius: 9999px; object-fit: cover; object-position: top; display: block; filter: grayscale(1); opacity: 0.6; box-shadow: 0 0 0 1.5px #cbd5e1; transition: filter .2s, opacity .2s, box-shadow .2s; }
+    .bnav-item.active .bnav-avatar { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px #00647c; }
   </style>
 <style data-purpose="animations">
     @keyframes marquee {
@@ -1258,7 +1260,7 @@
 
         <!-- Tab 6: You (User Profile) -->
         <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#you" data-navpage="you">
-          <i class="bnav-icon fa-solid fa-user text-[18px] transition-colors"></i>
+          <span class="bnav-icon inline-flex items-center justify-center"><img alt="You" class="bnav-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" loading="lazy" decoding="async"/></span>
           <span class="bnav-label text-[10px] tracking-tight leading-none">You</span>
           <div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
         </a>
