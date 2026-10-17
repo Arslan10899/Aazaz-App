@@ -1088,9 +1088,9 @@
         '<div class="relative h-full flex flex-col justify-end px-4 pt-16 pb-24">' +
         '<div class="flex items-end gap-3">' +
         '<div class="flex-1 min-w-0">' +
-        '<img alt="' + d.name + '" class="reel-img w-16 h-16 rounded-full object-cover object-top ring-2 ring-white/80 shadow-lg mb-2.5" src="' + d.img + '" loading="lazy" decoding="async" draggable="false"/>' +
+        '<img alt="' + d.name + '" class="reel-img slide-profile cursor-pointer w-16 h-16 rounded-full object-cover object-top ring-2 ring-white/80 shadow-lg mb-2.5" src="' + d.img + '" data-dname="' + d.name + '" loading="lazy" decoding="async" draggable="false"/>' +
         '<div class="flex items-center gap-2">' +
-        '<h2 class="text-xl font-bold tracking-tight text-white font-display truncate">' + d.name + '</h2>' +
+        '<h2 class="slide-profile cursor-pointer text-xl font-bold tracking-tight text-white font-display truncate" data-dname="' + d.name + '">' + d.name + '</h2>' +
         '<i class="fa-solid fa-circle-check text-cyan-300 text-sm shrink-0"></i>' +
         '</div>' +
         '<div class="flex items-center gap-2 mt-1.5">' +
@@ -1127,6 +1127,8 @@
       homeFeed.innerHTML = feedHTML;
 
       homeFeed.addEventListener('click', function (e) {
+        var prof = e.target.closest('.slide-profile');
+        if (prof) { openProfile(prof.getAttribute('data-dname')); return; }
         var likeBtn = e.target.closest('.like-btn');
         if (likeBtn) { likeBtn.classList.toggle('liked'); }
       });
