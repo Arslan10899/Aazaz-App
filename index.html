@@ -58,6 +58,12 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+    .bnav-item .bnav-icon { color: #6e797e; }
+    .bnav-item .bnav-label { color: #3e484d; font-weight: 500; }
+    .bnav-item .bnav-bar { display: none; }
+    .bnav-item.active .bnav-icon { color: #00647c; }
+    .bnav-item.active .bnav-label { color: #00647c; font-weight: 700; }
+    .bnav-item.active .bnav-bar { display: block; }
   </style>
 <style data-purpose="animations">
     @keyframes marquee {
@@ -1143,34 +1149,36 @@
 <!-- BEGIN: BottomNavigationDock -->
 <nav class="relative z-30 bg-white border-t border-slate-200 px-2 pt-1 pb-0.5 shadow-lg" data-purpose="mobile-navigation">
 <div class="flex items-center justify-between text-[#6e797e]">
-<!-- Tab 1: OPD Schedule -->
-        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#opd">
-<i class="fa-regular fa-calendar-check text-[18px] text-[#00647c] group-hover:text-[#004e61] transition-colors"></i>
-<span class="text-[10px] font-bold tracking-tight leading-none text-[#00647c]">OPD Schedule</span>
-<!-- Active bar indicator below OPD icon -->
-<div class="w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+<!-- Tab 1: Home -->
+        <a class="bnav-item active flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#home" data-navpage="home">
+<i class="bnav-icon fa-solid fa-house text-[18px] transition-colors"></i>
+<span class="bnav-label text-[10px] tracking-tight leading-none">Home</span>
+<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
-<!-- Tab 2: Sehat Card Doctors -->
-        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#sehat-card">
-<i class="fa-regular fa-id-card text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
-<span class="text-[10px] font-medium tracking-tight text-center leading-3 text-[#3e484d]">Sehat Card<br/>Doctors</span>
+<!-- Tab 2: Hospitals -->
+        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#hospitals" data-navpage="hospital">
+<i class="bnav-icon fa-regular fa-hospital text-[18px] transition-colors"></i>
+<span class="bnav-label text-[10px] tracking-tight leading-none">Hospitals</span>
+<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
-<!-- Tab 3 (Center Anchor): Specialties -->
+<!-- Tab 3 (Center Anchor): Join as Doctor -->
 <div class="relative -top-3.5 flex flex-col items-center shrink-0 mx-1">
-<button aria-label="Browse Specialties" class="flex items-center justify-center active:scale-95 transition transform" type="button">
-<img alt="Specialties" class="h-12 w-auto object-contain drop-shadow-md" src="icon/dr-app-icon.png"/>
+<button aria-label="Join as Doctor" class="flex items-center justify-center active:scale-95 transition transform" type="button">
+<img alt="Join as Doctor" class="h-12 w-auto object-contain drop-shadow-md" src="icon/dr-app-icon.png"/>
 </button>
-<span class="text-[10px] font-bold text-[#131b2e] mt-0.5 tracking-tight">Specialties</span>
+<span class="text-[10px] font-bold text-[#131b2e] mt-0.5 tracking-tight text-center leading-3">Join as<br/>Doctor</span>
 </div>
-<!-- Tab 4: Hospitals -->
-        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#hospitals">
-<i class="fa-regular fa-hospital text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
-<span class="text-[10px] font-medium tracking-tight leading-none text-[#3e484d]">Hospitals</span>
+<!-- Tab 4: Doctors -->
+        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#doctors" data-navpage="doctor">
+<i class="bnav-icon fa-solid fa-user-doctor text-[18px] transition-colors"></i>
+<span class="bnav-label text-[10px] tracking-tight leading-none">Doctors</span>
+<div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
 <!-- Tab 5: Help & Support -->
-        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#help" id="helpNavBtn">
-          <i class="fa-regular fa-circle-question text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
-          <span class="text-[10px] font-medium tracking-tight text-center leading-3 text-[#3e484d]">Help &amp; Support</span>
+        <a class="bnav-item flex-1 flex flex-col items-center gap-0.5 py-0.5 active:scale-95 transition" href="#help" data-navpage="help">
+          <i class="bnav-icon fa-regular fa-circle-question text-[18px] transition-colors"></i>
+          <span class="bnav-label text-[10px] tracking-tight text-center leading-3">Help &amp; Support</span>
+          <div class="bnav-bar w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
         </a>
 </div>
 <!-- iOS Home Indicator / Gesture Bar -->
@@ -1201,6 +1209,11 @@
       if (appHeader) {
         appHeader.classList.toggle('header-light', name !== 'home');
       }
+      var bnavs = document.querySelectorAll('.bnav-item');
+      bnavs.forEach(function (b) {
+        var p = b.getAttribute('data-navpage');
+        b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile'));
+      });
     }
 
     tabs.forEach(function (tab) {
@@ -1217,13 +1230,13 @@
       });
     }
 
-    var helpNavBtn = document.getElementById('helpNavBtn');
-    if (helpNavBtn) {
-      helpNavBtn.addEventListener('click', function (e) {
+    var bnavItems = document.querySelectorAll('.bnav-item');
+    bnavItems.forEach(function (b) {
+      b.addEventListener('click', function (e) {
         e.preventDefault();
-        showPage('help');
+        showPage(b.getAttribute('data-navpage'));
       });
-    }
+    });
 
     var searchBtn = document.getElementById('topSearchBtn');
     if (searchBtn) {
