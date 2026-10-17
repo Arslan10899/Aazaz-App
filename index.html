@@ -206,6 +206,7 @@
 <!-- TikTok-style Category Tabs -->
 <div class="relative flex items-center px-2 pt-0.5 pb-0.5">
 <div class="flex-1 flex items-center justify-center gap-2.5 overflow-x-auto px-6">
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="nearby" type="button">Near By You<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="specialty" type="button">Specialty<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="city" type="button">City<span class="tab-indicator"></span></button>
 <button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="symptom" type="button">Symptom<span class="tab-indicator"></span></button>
@@ -810,6 +811,16 @@
 </div>
 </div>
 <!-- Page: Specialty (List - no image) -->
+<!-- Page: Near By You -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="nearby">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Near By You</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">Live location</span>
+</div>
+<div id="nbStatus" class="mb-3"></div>
+<div id="nbDoctors" class="flex flex-col gap-2.5"></div>
+<div id="nbHospitals" class="flex flex-col gap-2.5 mt-4"></div>
+</div>
 <div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="specialty">
 <div class="flex items-center justify-between mb-3">
 <h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Specialties</h2>
@@ -1212,6 +1223,7 @@
         var p = b.getAttribute('data-navpage');
         b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile'));
       });
+      if (name === 'nearby') { loadNearby(); }
     }
 
     tabs.forEach(function (tab) {
@@ -1236,6 +1248,14 @@
       });
     });
 
+    var nbDocWrap = document.getElementById('nbDoctors');
+    if (nbDocWrap) {
+      nbDocWrap.addEventListener('click', function (e) {
+        var b = e.target.closest('.nb-doc');
+        if (b) { openProfile(b.getAttribute('data-dname')); }
+      });
+    }
+
     var searchBtn = document.getElementById('topSearchBtn');
     if (searchBtn) {
       searchBtn.addEventListener('click', function () {
@@ -1250,20 +1270,24 @@
       { name: 'Dr. Usman Tariq', spec: 'Orthopedic Surgeon', yrs: 11, rating: '4.8', reviews: '810', fee: '2,000', online: '1,500', loc: 'Bone & Joint Center, Lahore', likes: '6.9K', comments: '221', img: 'https://images.unsplash.com/photo-1645066928295-2506defde470?auto=format&fit=crop&w=900&q=80', quote: 'Struggling with knee pain? A quick assessment can help.' },
       { name: 'Dr. Hina Raza', spec: 'Pediatrician', yrs: 8, rating: '4.9', reviews: '1.4K', fee: '1,500', online: '1,100', loc: 'Little Stars Clinic, Lahore', likes: '11.2K', comments: '389', img: 'https://images.unsplash.com/photo-1678695972687-033fa0bdbac9?auto=format&fit=crop&w=900&q=80', quote: "Your child's health is my priority. Timely vaccinations matter." },
       { name: 'Dr. Faisal Iqbal', spec: 'Neurologist', yrs: 16, rating: '4.6', reviews: '520', fee: '3,000', online: '2,200', loc: 'Neuro Care Institute, Lahore', likes: '5.4K', comments: '154', img: 'https://images.unsplash.com/photo-1659353888306-e06177765540?auto=format&fit=crop&w=900&q=80', quote: 'Frequent headaches or dizziness? Get evaluated by a specialist.' },
-      { name: 'Dr. Maryam Shah', spec: 'Gynecologist', yrs: 12, rating: '4.9', reviews: '1.1K', fee: '2,200', online: '1,700', loc: 'Mother & Child Hospital, Lahore', likes: '10.8K', comments: '412', img: 'https://images.unsplash.com/photo-1659353888818-0e41520d086a?auto=format&fit=crop&w=900&q=80', quote: "Complete women's care in a safe and comfortable environment." },
-      { name: 'Dr. Hamza Sheikh', spec: 'ENT Specialist', yrs: 6, rating: '4.5', reviews: '430', fee: '1,400', online: '1,000', loc: 'Clear Tone ENT Clinic, Lahore', likes: '4.7K', comments: '132', img: 'https://images.unsplash.com/photo-1758691463626-0ab959babe00?auto=format&fit=crop&w=900&q=80', quote: 'Ear, nose or throat trouble? Quick relief starts here.' },
-      { name: 'Dr. Zainab Ali', spec: 'Ophthalmologist', yrs: 10, rating: '4.7', reviews: '720', fee: '1,900', online: '1,400', loc: 'Bright Vision Eye Center, Lahore', likes: '6.1K', comments: '187', img: 'https://images.unsplash.com/photo-1623854767648-e7bb8009f0db?auto=format&fit=crop&w=900&q=80', quote: 'Blurry vision should never be ignored. Book an eye exam.' },
-      { name: 'Dr. Omar Farooq', spec: 'Gastroenterologist', yrs: 13, rating: '4.8', reviews: '870', fee: '2,600', online: '1,900', loc: 'Digestive Health Clinic, Lahore', likes: '7.3K', comments: '243', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80', quote: 'Persistent stomach issues? Let us find the root cause.' },
-      { name: 'Dr. Fatima Noor', spec: 'Endocrinologist', yrs: 8, rating: '4.6', reviews: '560', fee: '2,100', online: '1,600', loc: 'Hormone Care Clinic, Lahore', likes: '5.2K', comments: '164', img: 'https://images.unsplash.com/photo-1758691462493-120a069304e6?auto=format&fit=crop&w=900&q=80', quote: 'Managing diabetes or thyroid? Personalized care available.' },
-      { name: 'Dr. Danish Raza', spec: 'Pulmonologist', yrs: 9, rating: '4.5', reviews: '490', fee: '1,700', online: '1,250', loc: 'Breathe Easy Clinic, Lahore', likes: '4.9K', comments: '141', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80', quote: 'Asthma or breathing trouble? Get expert lung care now.' },
-      { name: 'Dr. Iqra Javed', spec: 'Psychiatrist', yrs: 7, rating: '4.8', reviews: '680', fee: '2,300', online: '1,750', loc: 'Mind Wellness Center, Lahore', likes: '8.4K', comments: '298', img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80', quote: 'Your mental health matters. Talk to a caring specialist.' },
-      { name: 'Dr. Saad Mehmood', spec: 'Urologist', yrs: 15, rating: '4.7', reviews: '740', fee: '2,800', online: '2,000', loc: 'Uro Care Hospital, Lahore', likes: '5.8K', comments: '176', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80', quote: 'Confidential urology care with advanced treatment options.' },
-      { name: 'Dr. Areeba Siddiqui', spec: 'Rheumatologist', yrs: 6, rating: '4.4', reviews: '380', fee: '1,600', online: '1,150', loc: 'Joint Relief Clinic, Lahore', likes: '4.1K', comments: '118', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80', quote: 'Joint stiffness or swelling? Early treatment prevents damage.' },
-      { name: 'Dr. Talha Aslam', spec: 'Nephrologist', yrs: 12, rating: '4.6', reviews: '610', fee: '2,400', online: '1,800', loc: 'Kidney Care Center, Lahore', likes: '5.6K', comments: '169', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80', quote: 'Protect your kidneys with regular check-ups and expert advice.' },
-      { name: 'Dr. Nimra Butt', spec: 'Dentist', yrs: 5, rating: '4.7', reviews: '520', fee: '1,200', online: '900', loc: 'Smile Dental Studio, Lahore', likes: '6.4K', comments: '203', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80', quote: 'A healthy smile starts with a routine dental visit.' },
-      { name: 'Dr. Kamran Yousaf', spec: 'Neurosurgeon', yrs: 18, rating: '4.9', reviews: '430', fee: '3,500', online: '2,600', loc: 'Advanced Neuro Hospital, Lahore', likes: '5.1K', comments: '147', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=900&q=80', quote: 'Advanced neurosurgical care with a compassionate approach.' },
-      { name: 'Dr. Rabia Anwar', spec: 'Oncologist', yrs: 14, rating: '4.8', reviews: '690', fee: '3,200', online: '2,400', loc: 'Hope Cancer Center, Lahore', likes: '7.9K', comments: '264', img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=80', quote: 'Comprehensive cancer care with hope and dignity.' },
-      { name: 'Dr. Junaid Khan', spec: 'General Surgeon', yrs: 10, rating: '4.5', reviews: '470', fee: '2,000', online: '1,500', loc: 'Surgical Care Hospital, Lahore', likes: '4.6K', comments: '136', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80', quote: 'Trusted surgical care with modern minimally invasive options.' }
+      { name: 'Dr. Maryam Shah', spec: 'Gynecologist', yrs: 12, rating: '4.9', reviews: '1.1K', fee: '2,200', online: '1,700', loc: 'Mother & Child Hospital, Karachi', likes: '10.8K', comments: '412', img: 'https://images.unsplash.com/photo-1659353888818-0e41520d086a?auto=format&fit=crop&w=900&q=80', quote: "Complete women's care in a safe and comfortable environment." },
+      { name: 'Dr. Hamza Sheikh', spec: 'ENT Specialist', yrs: 6, rating: '4.5', reviews: '430', fee: '1,400', online: '1,000', loc: 'Clear Tone ENT Clinic, Karachi', likes: '4.7K', comments: '132', img: 'https://images.unsplash.com/photo-1758691463626-0ab959babe00?auto=format&fit=crop&w=900&q=80', quote: 'Ear, nose or throat trouble? Quick relief starts here.' },
+      { name: 'Dr. Zainab Ali', spec: 'Ophthalmologist', yrs: 10, rating: '4.7', reviews: '720', fee: '1,900', online: '1,400', loc: 'Bright Vision Eye Center, Karachi', likes: '6.1K', comments: '187', img: 'https://images.unsplash.com/photo-1623854767648-e7bb8009f0db?auto=format&fit=crop&w=900&q=80', quote: 'Blurry vision should never be ignored. Book an eye exam.' },
+      { name: 'Dr. Omar Farooq', spec: 'Gastroenterologist', yrs: 13, rating: '4.8', reviews: '870', fee: '2,600', online: '1,900', loc: 'Digestive Health Clinic, Islamabad', likes: '7.3K', comments: '243', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80', quote: 'Persistent stomach issues? Let us find the root cause.' },
+      { name: 'Dr. Fatima Noor', spec: 'Endocrinologist', yrs: 8, rating: '4.6', reviews: '560', fee: '2,100', online: '1,600', loc: 'Hormone Care Clinic, Islamabad', likes: '5.2K', comments: '164', img: 'https://images.unsplash.com/photo-1758691462493-120a069304e6?auto=format&fit=crop&w=900&q=80', quote: 'Managing diabetes or thyroid? Personalized care available.' },
+      { name: 'Dr. Danish Raza', spec: 'Pulmonologist', yrs: 9, rating: '4.5', reviews: '490', fee: '1,700', online: '1,250', loc: 'Breathe Easy Clinic, Rawalpindi', likes: '4.9K', comments: '141', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80', quote: 'Asthma or breathing trouble? Get expert lung care now.' },
+      { name: 'Dr. Iqra Javed', spec: 'Psychiatrist', yrs: 7, rating: '4.8', reviews: '680', fee: '2,300', online: '1,750', loc: 'Mind Wellness Center, Rawalpindi', likes: '8.4K', comments: '298', img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80', quote: 'Your mental health matters. Talk to a caring specialist.' },
+      { name: 'Dr. Saad Mehmood', spec: 'Urologist', yrs: 15, rating: '4.7', reviews: '740', fee: '2,800', online: '2,000', loc: 'Uro Care Hospital, Faisalabad', likes: '5.8K', comments: '176', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80', quote: 'Confidential urology care with advanced treatment options.' },
+      { name: 'Dr. Areeba Siddiqui', spec: 'Rheumatologist', yrs: 6, rating: '4.4', reviews: '380', fee: '1,600', online: '1,150', loc: 'Joint Relief Clinic, Faisalabad', likes: '4.1K', comments: '118', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80', quote: 'Joint stiffness or swelling? Early treatment prevents damage.' },
+      { name: 'Dr. Talha Aslam', spec: 'Nephrologist', yrs: 12, rating: '4.6', reviews: '610', fee: '2,400', online: '1,800', loc: 'Kidney Care Center, Multan', likes: '5.6K', comments: '169', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80', quote: 'Protect your kidneys with regular check-ups and expert advice.' },
+      { name: 'Dr. Nimra Butt', spec: 'Dentist', yrs: 5, rating: '4.7', reviews: '520', fee: '1,200', online: '900', loc: 'Smile Dental Studio, Multan', likes: '6.4K', comments: '203', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80', quote: 'A healthy smile starts with a routine dental visit.' },
+      { name: 'Dr. Kamran Yousaf', spec: 'Neurosurgeon', yrs: 18, rating: '4.9', reviews: '430', fee: '3,500', online: '2,600', loc: 'Advanced Neuro Hospital, Peshawar', likes: '5.1K', comments: '147', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=900&q=80', quote: 'Advanced neurosurgical care with a compassionate approach.' },
+      { name: 'Dr. Rabia Anwar', spec: 'Oncologist', yrs: 14, rating: '4.8', reviews: '690', fee: '3,200', online: '2,400', loc: 'Hope Cancer Center, Peshawar', likes: '7.9K', comments: '264', img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=80', quote: 'Comprehensive cancer care with hope and dignity.' },
+      { name: 'Dr. Junaid Khan', spec: 'General Surgeon', yrs: 10, rating: '4.5', reviews: '470', fee: '2,000', online: '1,500', loc: 'Surgical Care Hospital, Peshawar', likes: '4.6K', comments: '136', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80', quote: 'Trusted surgical care with modern minimally invasive options.' },
+      { name: 'Dr. Adnan Waraich', spec: 'General Physician', yrs: 8, rating: '4.7', reviews: '540', fee: '1,300', online: '950', loc: 'Gomal Medical Clinic, Dera Ismail Khan', likes: '3.8K', comments: '112', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80', quote: 'Serving the people of Dera Ismail Khan with trusted medical care.' },
+      { name: 'Dr. Saima Bibi', spec: 'Gynecologist', yrs: 11, rating: '4.8', reviews: '760', fee: '1,900', online: '1,400', loc: 'City Women Hospital, Dera Ismail Khan', likes: '5.9K', comments: '218', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80', quote: "Complete women's care close to home in Dera Ismail Khan." },
+      { name: 'Dr. Hamidullah Khan', spec: 'Orthopedic Surgeon', yrs: 13, rating: '4.7', reviews: '620', fee: '2,100', online: '1,550', loc: 'Bone & Joint Center, Dera Ismail Khan', likes: '4.4K', comments: '158', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80', quote: 'Knee and back pain? Expert orthopedic care near you.' },
+      { name: 'Dr. Rabia Gul', spec: 'Pediatrician', yrs: 6, rating: '4.6', reviews: '430', fee: '1,400', online: '1,000', loc: 'Child Care Clinic, Dera Ismail Khan', likes: '3.6K', comments: '121', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80', quote: 'Caring for your little ones in Dera Ismail Khan.' }
     ];
 
     function dockBtn(icon, color, label, cls) {
@@ -1372,12 +1396,172 @@
       'Dr. Nimra Butt': 'ڈاکٹر نمرہ بٹ',
       'Dr. Kamran Yousaf': 'ڈاکٹر کامران یوسف',
       'Dr. Rabia Anwar': 'ڈاکٹر رابعہ انور',
-      'Dr. Junaid Khan': 'ڈاکٹر جنید خان'
+      'Dr. Junaid Khan': 'ڈاکٹر جنید خان',
+      'Dr. Adnan Waraich': 'ڈاکٹر عدنان وڑائچ',
+      'Dr. Saima Bibi': 'ڈاکٹر سائمہ بی بی',
+      'Dr. Hamidullah Khan': 'ڈاکٹر حامداللہ خان',
+      'Dr. Rabia Gul': 'ڈاکٹر رابعہ گل'
     };
 
     function setText(id, val) {
       var el = document.getElementById(id);
       if (el) { el.textContent = val; }
+    }
+
+    var nearbyCityCoords = [
+      { name: 'Lahore', lat: 31.5204, lon: 74.3587 },
+      { name: 'Karachi', lat: 24.8607, lon: 67.0011 },
+      { name: 'Islamabad', lat: 33.6844, lon: 73.0479 },
+      { name: 'Rawalpindi', lat: 33.5651, lon: 73.0169 },
+      { name: 'Faisalabad', lat: 31.4504, lon: 73.1350 },
+      { name: 'Multan', lat: 30.1575, lon: 71.5249 },
+      { name: 'Peshawar', lat: 34.0151, lon: 71.5805 },
+      { name: 'Dera Ismail Khan', lat: 31.8350, lon: 70.9070 }
+    ];
+
+    var nearbyHospitals = {
+      'Lahore': [
+        { name: 'Services Hospital', area: 'Gulberg', rating: '4.7', status: 'Open 24/7', open: true },
+        { name: 'Shaukat Khanum Memorial', area: 'Johar Town', rating: '4.9', status: 'Busy', open: false },
+        { name: 'Jinnah Hospital', area: 'Ferozepur Road', rating: '4.5', status: 'Open', open: true }
+      ],
+      'Karachi': [
+        { name: 'Aga Khan University Hospital', area: 'Stadium Road', rating: '4.8', status: 'Open 24/7', open: true },
+        { name: 'Liaquat National Hospital', area: 'Gulshan-e-Iqbal', rating: '4.6', status: 'Open', open: true },
+        { name: 'Ziauddin Hospital', area: 'Clifton', rating: '4.5', status: 'Busy', open: false }
+      ],
+      'Islamabad': [
+        { name: 'Shifa International Hospital', area: 'Sector H-8', rating: '4.8', status: 'Open 24/7', open: true },
+        { name: 'PIMS Hospital', area: 'Sector G-8', rating: '4.6', status: 'Open', open: true }
+      ],
+      'Rawalpindi': [
+        { name: 'Holy Family Hospital', area: 'Satellite Town', rating: '4.5', status: 'Open 24/7', open: true },
+        { name: 'Benazir Bhutto Hospital', area: 'Airport Road', rating: '4.4', status: 'Open', open: true }
+      ],
+      'Faisalabad': [
+        { name: 'Allied Hospital', area: 'Saraiwala', rating: '4.5', status: 'Open 24/7', open: true },
+        { name: 'GM Mahar Medical College', area: 'Jaranwala Road', rating: '4.3', status: 'Busy', open: false }
+      ],
+      'Multan': [
+        { name: 'Nishtar Hospital', area: 'Nishtar Road', rating: '4.6', status: 'Open 24/7', open: true },
+        { name: 'Multan Institute of Cardiology', area: 'Bosan Road', rating: '4.5', status: 'Open', open: true }
+      ],
+      'Peshawar': [
+        { name: 'Lady Reading Hospital', area: 'Mehmand Road', rating: '4.6', status: 'Open 24/7', open: true },
+        { name: 'Khyber Teaching Hospital', area: 'Sohail Abad', rating: '4.5', status: 'Open', open: true }
+      ],
+      'Dera Ismail Khan': [
+        { name: 'Gomal Teaching Hospital', area: 'Gomal Medical College Road', rating: '4.6', status: 'Open 24/7', open: true },
+        { name: 'DHQ Hospital', area: 'Tank Road', rating: '4.4', status: 'Open', open: true },
+        { name: 'Ammar Medical Complex', area: 'University Road', rating: '4.3', status: 'Busy', open: false }
+      ]
+    };
+
+    function nearestCityName(lat, lon) {
+      var best = 'Lahore', bestD = Infinity;
+      for (var i = 0; i < nearbyCityCoords.length; i++) {
+        var c = nearbyCityCoords[i];
+        var dLat = (c.lat - lat) * 111;
+        var dLon = (c.lon - lon) * 111 * Math.cos(lat * Math.PI / 180);
+        var d = dLat * dLat + dLon * dLon;
+        if (d < bestD) { bestD = d; best = c.name; }
+      }
+      return best;
+    }
+
+    function matchKnownCity(label) {
+      var s = (label || '').toLowerCase();
+      for (var i = 0; i < nearbyCityCoords.length; i++) {
+        var n = nearbyCityCoords[i].name.toLowerCase();
+        if (s.indexOf(n) >= 0) { return nearbyCityCoords[i].name; }
+      }
+      return null;
+    }
+
+    function docCity(d) { return ((d.loc || '').split(',').pop() || '').trim(); }
+
+    function renderNearby(city, displayLabel) {
+      var statusEl = document.getElementById('nbStatus');
+      var docWrap = document.getElementById('nbDoctors');
+      var hospWrap = document.getElementById('nbHospitals');
+      if (!statusEl || !docWrap || !hospWrap) { return; }
+      statusEl.innerHTML = '<span class="inline-flex items-center gap-2 bg-[#00647c]/10 border border-[#00647c]/20 text-[#00647c] px-3 py-1.5 rounded-full text-[12px] font-bold"><i class="fa-solid fa-location-dot"></i>' + (displayLabel || city) + '</span>';
+      var docs = doctors.filter(function (d) { return docCity(d) === city; });
+      var html = '';
+      if (!docs.length) {
+        html = '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 text-[12px] font-semibold text-[#6e797e]">No doctors listed in ' + city + ' yet.</div>';
+      } else {
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i];
+          html += '<button class="nb-doc flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button" data-dname="' + d.name + '">' +
+            '<img alt="' + d.name + '" class="w-12 h-12 rounded-xl object-cover object-top shrink-0" src="' + d.img + '" loading="lazy" decoding="async"/>' +
+            '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-1.5">' +
+            '<h3 class="text-[13px] font-bold text-[#131b2e] truncate">' + d.name + '</h3>' +
+            '<span class="relative inline-flex shrink-0"><i class="fa-solid fa-certificate text-emerald-500 text-[11px]"></i><i class="fa-solid fa-check text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="font-size:0.46em"></i></span>' +
+            '</div>' +
+            '<p class="text-[11px] font-medium text-[#6e797e] mt-0.5 truncate">' + d.spec + '</p>' +
+            '<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">' +
+            '<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>' + d.rating + '</span>' +
+            '</div>' +
+            '</div>' +
+            '<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e] shrink-0"></i>' +
+            '</button>';
+        }
+      }
+      docWrap.innerHTML = html;
+
+      var hosps = nearbyHospitals[city] || [];
+      var hhtml = '';
+      if (!hosps.length) {
+        hhtml = '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 text-[12px] font-semibold text-[#6e797e]">No hospitals listed in ' + city + ' yet.</div>';
+      } else {
+        for (var j = 0; j < hosps.length; j++) {
+          var h = hosps[j];
+          hhtml += '<div class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3">' +
+            '<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0"><i class="fa-solid fa-hospital text-lg"></i></div>' +
+            '<div class="flex-1 min-w-0">' +
+            '<h3 class="text-[13px] font-bold text-[#131b2e] truncate">' + h.name + '</h3>' +
+            '<p class="text-[11px] font-medium text-[#3e484d] mt-0.5 truncate">' + h.area + ', ' + city + '</p>' +
+            '<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">' +
+            '<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>' + h.rating + '</span>' +
+            '<span class="px-1.5 py-0.5 rounded-full ' + (h.open ? 'text-[#00855b] bg-[#00855b]/10' : 'text-[#ba1a1a] bg-[#ba1a1a]/10') + '">' + h.status + '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        }
+      }
+      hospWrap.innerHTML = hhtml;
+    }
+
+    function loadNearby() {
+      var statusEl = document.getElementById('nbStatus');
+      if (!statusEl) { return; }
+      statusEl.innerHTML = '<span class="inline-flex items-center gap-2 text-[12px] font-semibold text-[#6e797e]"><i class="fa-solid fa-spinner fa-spin text-[#00647c]"></i>Finding your location...</span>';
+      if (!navigator.geolocation) { renderNearby('Lahore', 'Lahore'); return; }
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var lat = pos.coords.latitude, lon = pos.coords.longitude;
+        var fallback = nearestCityName(lat, lon);
+        var done = false;
+        function finish(label) {
+          if (done) { return; }
+          done = true;
+          var city = matchKnownCity(label) || fallback;
+          renderNearby(city, city);
+        }
+        try {
+          fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en')
+            .then(function (r) { return r.json(); })
+            .then(function (j) {
+              var label = j.city || j.locality || j.principalSubdivisionCity || j.principalSubdivision || '';
+              finish(label);
+            })
+            .catch(function () { finish(''); });
+        } catch (e) { finish(''); }
+        setTimeout(function () { finish(''); }, 6000);
+      }, function () {
+        renderNearby('Lahore', 'Location off - showing Lahore');
+      }, { timeout: 10000, maximumAge: 600000 });
     }
 
     function setProfileTab(key) {
