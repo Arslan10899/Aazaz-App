@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Doctor App - Find Your Doctor</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<!-- Google Fonts: Space Grotesk & Atkinson Hyperlegible Next / Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Noto+Nastaliq+Urdu:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#00647c',
+              darkTeal: '#004e61',
+              cyan: '#007f9d',
+              accent: '#00855b',
+              navy: '#131b2e',
+              lightSurface: '#faf8ff',
+              lightContainer: '#eaedff'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            title: ['"Archivo Narrow"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="base-layout">
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .urdu-name {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      direction: rtl;
+      line-height: 2;
+    }
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style data-purpose="animations">
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: marquee 22s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+  </style>
+<style data-purpose="tiktok-tabs">
+    .tab-btn {
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 600;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+      transition: color 0.2s ease;
+    }
+    .tab-btn.active {
+      color: #ffffff;
+      font-weight: 800;
+    }
+    .tab-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: -1px;
+      transform: translateX(-50%) scaleX(0);
+      width: 20px;
+      height: 3px;
+      border-radius: 9999px;
+      background: #ffffff;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-btn.active .tab-indicator {
+      transform: translateX(-50%) scaleX(1);
+    }
+    .page-panel {
+      animation: pageIn 0.22s ease-out;
+    }
+    .tt-text {
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+    }
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+<style data-purpose="reel-feed">
+    /* TikTok-style smooth vertical snap feed */
+    #homeFeed {
+      scroll-snap-type: y mandatory;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+    #homeFeed::-webkit-scrollbar { display: none; }
+    #homeFeed > section {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100%;
+    }
+    /* Images fade/zoom in when loaded for a silky feel */
+    #homeFeed img.reel-img {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      -webkit-user-drag: none;
+    }
+    #homeFeed > section > img.reel-img {
+      transform: scale(1.06);
+      transition: opacity 0.5s ease, transform 0.7s ease;
+    }
+    #homeFeed img.reel-img.reel-img-ready { opacity: 1; }
+    #homeFeed > section > img.reel-img.reel-img-ready { transform: scale(1); }
+    @media (prefers-reduced-motion: reduce) {
+      #homeFeed img.reel-img,
+      #homeFeed > section > img.reel-img { transition: none; transform: none; opacity: 1; }
+    }
+  </style>
+<style data-purpose="header-theme">
+    .updates-text { text-shadow: 0 1px 4px rgba(11, 18, 32, 0.9), 0 0 10px rgba(11, 18, 32, 0.6); }
+    .updates-icon i { filter: drop-shadow(0 1px 3px rgba(11, 18, 32, 0.9)); }
+    #appHeader.header-light { background: #faf8ff; box-shadow: 0 1px 0 rgba(19, 27, 46, 0.08); }
+    #appHeader.header-light h1 { color: #131b2e; text-shadow: none; }
+    #appHeader.header-light h1 span { background-image: linear-gradient(to right, #00647c, #007f9d); }
+    #appHeader.header-light .tab-btn { color: rgba(19, 27, 46, 0.5); text-shadow: none; }
+    #appHeader.header-light .tab-btn.active { color: #00647c; }
+    #appHeader.header-light .tab-indicator { background: #00647c; box-shadow: none; }
+    #appHeader.header-light #topSearchBtn { color: #131b2e; }
+    #appHeader.header-light .updates-pill { background: transparent; backdrop-filter: none; box-shadow: none; }
+    #appHeader.header-light .updates-text { color: #3e484d; text-shadow: none; }
+    #appHeader.header-light .updates-icon i { filter: none; }
+  </style>
+<style data-purpose="reel-actions">
+    .like-btn i { transition: color 0.15s ease, transform 0.15s ease; }
+    .like-btn.liked i { color: #f43f5e; transform: scale(1.12); }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-slate-100 flex justify-center items-center min-h-screen antialiased text-[#131b2e]">
+<!-- Mobile Container Mockup (iOS viewport ratio) -->
+<div class="relative w-full max-w-[430px] h-[100dvh] max-h-[932px] overflow-hidden bg-[#faf8ff] shadow-2xl flex flex-col justify-between border border-slate-200/80">
+<!-- BEGIN: Background Doctor Media -->
+<div class="absolute inset-0 z-0" data-purpose="reel-background"></div>
+<!-- END: Background Doctor Media -->
+<!-- Page: Home (Reel Feed - full screen, image behind header) -->
+<div class="page-panel absolute inset-0 z-[5]" data-panel="home">
+<div class="h-full w-full overflow-y-auto snap-y snap-mandatory" id="homeFeed"></div>
+</div>
+<!-- BEGIN: TopHeaderSection -->
+<header class="relative z-20 pt-2 pb-1.5 flex flex-col gap-2" id="appHeader">
+<!-- Main App Bar: Brand + Updates (single clean line) -->
+<div class="pt-1">
+<div class="flex items-center gap-2 h-10">
+<!-- Brand -->
+<h1 class="font-title text-[22px] font-bold leading-none tracking-tight text-white drop-shadow shrink-0 pl-3.5"><span class="bg-gradient-to-r from-[#5eead4] to-[#22d3ee] bg-clip-text text-transparent">Doctor</span> App</h1>
+<!-- Updates pill: icon + marquee -->
+<div class="updates-pill flex-1 min-w-0 flex items-center gap-2 h-9 rounded-full pl-1 pr-3 overflow-hidden">
+<span class="updates-icon shrink-0 flex items-center justify-center"><i class="fa-solid fa-bullhorn text-[15px] text-rose-500"></i></span>
+<div class="flex-1 min-w-0 overflow-hidden whitespace-nowrap">
+<div class="animate-marquee updates-text flex items-center text-[11.5px] font-medium text-white/90">
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse"></span><span>Free medical camp at Services Hospital this Sunday, 9 AM – 2 PM</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span><span>Sehat Card now accepted at 40+ new partner hospitals</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-cyan-300 shrink-0"></span><span>24/7 online consultation now live in Lahore</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span><span>Upload your lab reports for instant review</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse"></span><span>Free medical camp at Services Hospital this Sunday, 9 AM – 2 PM</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span><span>Sehat Card now accepted at 40+ new partner hospitals</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-cyan-300 shrink-0"></span><span>24/7 online consultation now live in Lahore</span></span>
+<span class="inline-flex items-center gap-2 mr-8 shrink-0"><span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span><span>Upload your lab reports for instant review</span></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TikTok-style Category Tabs -->
+<div class="relative flex items-center px-2 pt-0.5 pb-0.5">
+<div class="flex-1 flex items-center justify-center gap-2.5 overflow-x-auto px-6">
+<button class="tab-btn active shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="home" type="button">Home<span class="tab-indicator"></span></button>
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="doctor" type="button">Doctor<span class="tab-indicator"></span></button>
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="hospital" type="button">Hospital<span class="tab-indicator"></span></button>
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="specialty" type="button">Specialty<span class="tab-indicator"></span></button>
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="city" type="button">City<span class="tab-indicator"></span></button>
+<button class="tab-btn shrink-0 relative py-1 text-[13.5px] tracking-tight whitespace-nowrap" data-page="symptom" type="button">Symptom<span class="tab-indicator"></span></button>
+</div>
+<button aria-label="Search" class="absolute right-2.5 w-8 h-8 flex items-center justify-center text-white drop-shadow active:scale-90 transition" id="topSearchBtn" type="button">
+<i class="fa-solid fa-magnifying-glass text-[15px]"></i>
+</button>
+</div>
+</header>
+<!-- END: TopHeaderSection -->
+<!-- BEGIN: PagesContainer -->
+<main class="relative z-[2] flex-1 overflow-hidden">
+<!-- Page: Doctor (List - no image) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="doctor">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Doctors</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">Top rated near you</span>
+</div>
+<div class="flex flex-col gap-2.5">
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Ayesha Khan" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1706565029539-d09af5896340?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Ayesha Khan</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر عائشہ خان</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">General Physician &middot; 9 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.9</span>
+<span class="text-[#3e484d]">Rs. 1,500</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Bilal Ahmed" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1642975967602-653d378f3b5b?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Bilal Ahmed</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر بلال احمد</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Cardiologist &middot; 14 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#3e484d]">Rs. 2,500</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Sana Malik" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1659353888906-adb3e0041693?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Sana Malik</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر ثنا ملک</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Dermatologist &middot; 7 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.7</span>
+<span class="text-[#3e484d]">Rs. 1,800</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Usman Tariq" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1645066928295-2506defde470?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Usman Tariq</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر عثمان طارق</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Orthopedic Surgeon &middot; 11 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#3e484d]">Rs. 2,000</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Hina Raza" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1678695972687-033fa0bdbac9?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Hina Raza</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر حنا رضا</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Pediatrician &middot; 8 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.9</span>
+<span class="text-[#3e484d]">Rs. 1,500</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Faisal Iqbal" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1659353888306-e06177765540?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Faisal Iqbal</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر فیصل اقبال</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Neurologist &middot; 16 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.6</span>
+<span class="text-[#3e484d]">Rs. 3,000</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Maryam Shah" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1659353888818-0e41520d086a?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Maryam Shah</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر مریم شاہ</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Gynecologist &middot; 12 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.9</span>
+<span class="text-[#3e484d]">Rs. 2,200</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Hamza Sheikh" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1758691463626-0ab959babe00?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Hamza Sheikh</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر حمزہ شیخ</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">ENT Specialist &middot; 6 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.5</span>
+<span class="text-[#3e484d]">Rs. 1,400</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Zainab Ali" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1623854767648-e7bb8009f0db?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Zainab Ali</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر زینب علی</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Ophthalmologist &middot; 10 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.7</span>
+<span class="text-[#3e484d]">Rs. 1,900</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Omar Farooq" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Omar Farooq</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر عمر فاروق</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Gastroenterologist &middot; 13 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#3e484d]">Rs. 2,600</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Fatima Noor" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1758691462493-120a069304e6?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Fatima Noor</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر فاطمہ نور</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Endocrinologist &middot; 8 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.6</span>
+<span class="text-[#3e484d]">Rs. 2,100</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Danish Raza" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Danish Raza</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر دانش رضا</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Pulmonologist &middot; 9 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.5</span>
+<span class="text-[#3e484d]">Rs. 1,700</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Iqra Javed" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Iqra Javed</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر اقراء جاوید</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Psychiatrist &middot; 7 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#3e484d]">Rs. 2,300</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Saad Mehmood" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Saad Mehmood</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر سعد محمود</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Urologist &middot; 15 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.7</span>
+<span class="text-[#3e484d]">Rs. 2,800</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Areeba Siddiqui" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Areeba Siddiqui</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر اریبہ صدیقی</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Rheumatologist &middot; 6 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.4</span>
+<span class="text-[#3e484d]">Rs. 1,600</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Talha Aslam" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Talha Aslam</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر طلحہ اسلم</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Nephrologist &middot; 12 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.6</span>
+<span class="text-[#3e484d]">Rs. 2,400</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Nimra Butt" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Nimra Butt</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر نمرہ بٹ</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Dentist &middot; 5 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.7</span>
+<span class="text-[#3e484d]">Rs. 1,200</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Kamran Yousaf" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Kamran Yousaf</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر کامران یوسف</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Neurosurgeon &middot; 18 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.9</span>
+<span class="text-[#3e484d]">Rs. 3,500</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Rabia Anwar" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Rabia Anwar</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر رابعہ انور</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Oncologist &middot; 14 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#3e484d]">Rs. 3,200</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<img alt="Dr. Junaid Khan" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Dr. Junaid Khan</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="urdu-name text-[12px] text-[#00647c] mt-0.5">ڈاکٹر جنید خان</p>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">General Surgeon &middot; 10 yrs exp.</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.5</span>
+<span class="text-[#3e484d]">Rs. 2,000</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+</div>
+</div>
+<!-- Page: Doctor Profile (Detail) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] hidden" data-panel="profile">
+<div class="relative">
+<img alt="Doctor" class="w-full h-60 object-cover object-top" id="profileHero" src=""/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#faf8ff] via-[#faf8ff]/10 to-black/40 pointer-events-none"></div>
+<button class="absolute top-3 left-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md active:scale-90 transition" id="profileBack" type="button"><i class="fa-solid fa-arrow-left text-[#131b2e] text-sm"></i></button>
+<button class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md active:scale-90 transition" type="button"><i class="fa-solid fa-share-nodes text-[#131b2e] text-sm"></i></button>
+</div>
+<div class="relative px-4 -mt-9">
+<div class="flex items-end gap-3">
+<img alt="Doctor" class="w-20 h-20 rounded-2xl object-cover object-top ring-4 ring-[#faf8ff] shadow-lg" id="profileAvatar" src=""/>
+<div class="min-w-0 pb-1">
+<div class="flex items-center gap-1.5">
+<h2 class="text-[17px] font-bold text-[#131b2e] font-display truncate" id="profileName">Doctor</h2>
+<i class="fa-solid fa-circle-check text-[#00647c] text-sm shrink-0"></i>
+</div>
+<p class="urdu-name text-[13px] text-[#00647c] mt-0.5" id="profileUrdu">—</p>
+</div>
+</div>
+<p class="text-[12.5px] font-semibold text-[#3e484d] mt-2.5" id="profileSpec">—</p>
+<div class="grid grid-cols-3 gap-2 mt-3.5">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
+<span class="text-[15px] font-bold text-[#131b2e]" id="statRating">4.9</span>
+<span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Rating</span>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
+<span class="text-[15px] font-bold text-[#131b2e]" id="statYears">9</span>
+<span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Yrs Exp.</span>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm py-2.5 flex flex-col items-center">
+<span class="text-[15px] font-bold text-[#131b2e]" id="statReviews">1.2K</span>
+<span class="text-[10px] font-medium text-[#6e797e] mt-0.5">Reviews</span>
+</div>
+</div>
+<div class="mt-4">
+<h3 class="text-[13px] font-bold text-[#131b2e]">About</h3>
+<p class="text-[12px] leading-relaxed text-[#3e484d] mt-1.5" id="profileAbout">—</p>
+</div>
+<div class="mt-4 flex flex-col gap-2">
+<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
+<i class="fa-solid fa-location-dot text-[#00647c] w-4 text-center"></i>
+<span class="text-[12px] font-medium text-[#3e484d]" id="profileLoc">—</span>
+</div>
+<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
+<i class="fa-solid fa-hospital text-[#00647c] w-4 text-center"></i>
+<span class="text-[12px] font-medium text-[#3e484d]">Clinic fee: Rs. <span id="profileFee">—</span></span>
+</div>
+<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
+<i class="fa-solid fa-video text-[#00647c] w-4 text-center"></i>
+<span class="text-[12px] font-medium text-[#3e484d]">Online consult: Rs. <span id="profileOnline">—</span></span>
+</div>
+<div class="flex items-center gap-2.5 bg-white rounded-2xl border border-slate-200 shadow-sm px-3 py-2.5">
+<i class="fa-solid fa-language text-[#00647c] w-4 text-center"></i>
+<span class="text-[12px] font-medium text-[#3e484d]">English, اردو</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2.5 mt-4 mb-6">
+<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-[#00647c] hover:bg-[#004e61] active:scale-[0.98] text-white rounded-xl shadow-md transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold"><i class="fa-solid fa-hospital text-sm"></i><span>Clinic Check-up</span></div><span class="text-[11px] font-medium text-cyan-100">Rs. <span id="ctaFee">—</span></span></button>
+<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-white hover:bg-slate-50 active:scale-[0.98] rounded-xl border border-slate-200 shadow-sm transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold"><i class="fa-solid fa-video text-sm text-[#00647c]"></i><span class="text-[#131b2e]">Online Check-up</span></div><span class="text-[11px] font-semibold text-[#3e484d]">Rs. <span id="ctaOnline">—</span></span></button>
+</div>
+</div>
+</div>
+<!-- Page: Hospital (List - no image) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="hospital">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Hospitals</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">124 near you</span>
+</div>
+<div class="flex flex-col gap-2.5">
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-hospital text-lg"></i>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Services Hospital</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Gulberg, Lahore &middot; 2.4 km</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.7</span>
+<span class="text-[#00855b] bg-[#00855b]/10 px-1.5 py-0.5 rounded-full">Open 24/7</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-hospital-user text-lg"></i>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Shaukat Khanum Memorial</h3>
+<i class="fa-solid fa-circle-check text-[#00647c] text-xs"></i>
+</div>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Johar Town, Lahore &middot; 5.1 km</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.9</span>
+<span class="text-[#ba1a1a] bg-[#ba1a1a]/10 px-1.5 py-0.5 rounded-full">Busy</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-house-medical text-lg"></i>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Jinnah Hospital</h3>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Ferozepur Road, Lahore &middot; 3.8 km</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.5</span>
+<span class="text-[#00855b] bg-[#00855b]/10 px-1.5 py-0.5 rounded-full">Open</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-hospital text-lg"></i>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Mayo Hospital</h3>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">Anarkali, Lahore &middot; 1.9 km</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.3</span>
+<span class="text-[#00855b] bg-[#00855b]/10 px-1.5 py-0.5 rounded-full">Open</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-12 h-12 rounded-xl bg-[#00647c]/10 border border-[#00647c]/20 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-hospital-user text-lg"></i>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-[#131b2e] truncate">Evercare Hospital</h3>
+<p class="text-[11px] font-medium text-[#3e484d] mt-0.5">DHA Phase 5, Lahore &middot; 6.2 km</p>
+<div class="flex items-center gap-2 mt-1 text-[10.5px] font-semibold">
+<span class="flex items-center gap-1 text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>4.8</span>
+<span class="text-[#00855b] bg-[#00855b]/10 px-1.5 py-0.5 rounded-full">Open</span>
+</div>
+</div>
+<span class="shrink-0 px-3 py-1.5 bg-[#00647c] text-white text-[11px] font-bold rounded-full shadow-sm active:scale-95 transition">Book</span>
+</button>
+</div>
+</div>
+<!-- Page: Specialty (List - no image) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="specialty">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Specialties</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">Browse by field</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00647c] to-[#007f9d] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-stethoscope text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">General Physician</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">210 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ba1a1a] to-[#e85d5d] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-heart-pulse text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Cardiology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">64 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#396092] to-[#5b84b8] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-brain text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Neurology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">38 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00855b] to-[#34a853] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-bone text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Orthopedics</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">52 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#9333ea] to-[#c084fc] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-eye text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Ophthalmology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">29 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#d97706] to-[#fbbf24] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-child-reaching text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Pediatrics</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">47 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0e7490] to-[#22d3ee] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-lungs text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Pulmonology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">33 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#be185d] to-[#f472b6] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-venus text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Gynecology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">58 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#38bdf8] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-tooth text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Dentistry</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">41 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#e11d48] to-[#fb7185] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-hand-dots text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Dermatology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">36 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a78bfa] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-ear-listen text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">ENT</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">28 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ea580c] to-[#fb923c] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-stomach text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Gastroenterology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">44 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0e7490] to-[#22d3ee] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-head-side-virus text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Psychiatry</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">31 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0d9488] to-[#2dd4bf] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-droplet text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Urology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">26 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#9333ea] to-[#d8b4fe] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-ribbon text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Oncology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">22 doctors</span>
+</button>
+<button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#475569] to-[#94a3b8] flex items-center justify-center text-white shadow-md">
+<i class="fa-solid fa-radiation text-lg"></i>
+</div>
+<span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Radiology</span>
+<span class="text-[10px] font-semibold text-[#6e797e]">19 doctors</span>
+</button>
+</div>
+</div>
+<!-- Page: City (List - no image) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="city">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Cities</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">All Punjab &amp; Pakistan</span>
+</div>
+<div class="flex flex-col gap-2">
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Lahore</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">1,240 doctors &middot; 86 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Karachi</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">2,180 doctors &middot; 142 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Islamabad</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">680 doctors &middot; 41 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Rawalpindi</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">540 doctors &middot; 38 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Faisalabad</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">390 doctors &middot; 27 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Multan</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">275 doctors &middot; 19 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="w-10 h-10 rounded-full bg-[#eaedff] border border-slate-200 flex items-center justify-center text-[#00647c] shrink-0">
+<i class="fa-solid fa-city text-sm"></i>
+</div>
+<div class="flex-1">
+<h3 class="text-[13px] font-bold text-[#131b2e]">Peshawar</h3>
+<p class="text-[10.5px] font-semibold text-[#6e797e]">310 doctors &middot; 22 hospitals</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[11px] text-[#6e797e]"></i>
+</button>
+</div>
+</div>
+<!-- Page: Symptom (List - no image) -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="symptom">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-lg font-bold tracking-tight text-[#131b2e] font-display">Symptoms</h2>
+<span class="text-[11px] font-semibold text-[#6e797e]">Find care fast</span>
+</div>
+<div class="relative flex items-center mb-3">
+<input class="w-full py-2.5 pl-4 pr-10 bg-white placeholder-[#8b9599] text-[#131b2e] text-[13px] rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00647c]/40 transition" placeholder="Search symptoms..." type="text"/>
+<div class="absolute right-4 text-[#6e797e] pointer-events-none">
+<i class="fa-solid fa-magnifying-glass text-sm"></i>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-temperature-half text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Fever</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-head-side-virus text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Headache</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-heart-pulse text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Chest Pain</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-lungs text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Breathing Issue</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-bone text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Back Pain</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-stomach text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Stomach Pain</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-hand-dots text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Skin Rash</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-eye text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Blurred Vision</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-user-doctor text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Sore Throat</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-brain text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Dizziness</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-person-cane text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Joint Pain</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
+<i class="fa-solid fa-moon text-[#00647c] text-xs"></i>
+<span class="text-[#131b2e] text-[12px] font-bold">Insomnia</span>
+</button>
+</div>
+<div class="text-[11px] font-bold uppercase tracking-wide text-[#6e797e] mb-2">Popular searches</div>
+<div class="flex flex-col gap-2.5">
+<button class="flex items-center justify-between gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="min-w-0">
+<h4 class="text-[13px] font-bold text-[#131b2e]">Flu &amp; Viral Fever</h4>
+<p class="text-[10.5px] font-semibold text-[#6e797e] mt-0.5">General Physician &middot; 3.2K searches</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[#6e797e] text-[11px] shrink-0"></i>
+</button>
+<button class="flex items-center justify-between gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm px-3.5 py-3 text-left active:scale-[0.99] transition" type="button">
+<div class="min-w-0">
+<h4 class="text-[13px] font-bold text-[#131b2e]">Knee &amp; Joint Pain</h4>
+<p class="text-[10.5px] font-semibold text-[#6e797e] mt-0.5">Orthopedics &middot; 2.1K searches</p>
+</div>
+<i class="fa-solid fa-chevron-right text-[#6e797e] text-[11px] shrink-0"></i>
+</button>
+</div>
+</div>
+</main>
+<!-- END: PagesContainer -->
+<!-- BEGIN: BottomNavigationDock -->
+<nav class="relative z-30 bg-white border-t border-slate-200 px-2 pt-1 pb-0.5 shadow-lg" data-purpose="mobile-navigation">
+<div class="flex items-center justify-between text-[#6e797e]">
+<!-- Tab 1: OPD Schedule -->
+        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#opd">
+<i class="fa-regular fa-calendar-check text-[18px] text-[#00647c] group-hover:text-[#004e61] transition-colors"></i>
+<span class="text-[10px] font-bold tracking-tight leading-none text-[#00647c]">OPD Schedule</span>
+<!-- Active bar indicator below OPD icon -->
+<div class="w-7 h-1 bg-[#00647c] rounded-full mt-0.5"></div>
+</a>
+<!-- Tab 2: Sehat Card Doctors -->
+        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#sehat-card">
+<i class="fa-regular fa-id-card text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
+<span class="text-[10px] font-medium tracking-tight text-center leading-3 text-[#3e484d]">Sehat Card<br/>Doctors</span>
+</a>
+<!-- Tab 3 (Center Anchor): Specialties -->
+<div class="relative -top-3.5 flex flex-col items-center shrink-0 mx-1">
+<button aria-label="Browse Specialties" class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#00647c] to-[#007f9d] p-0.5 shadow-lg flex items-center justify-center ring-[3px] ring-white active:scale-95 transition transform" type="button">
+<div class="w-full h-full rounded-full bg-gradient-to-b from-[#007f9d] to-[#00647c] flex items-center justify-center text-white">
+<i class="fa-solid fa-stethoscope text-xl drop-shadow-sm"></i>
+</div>
+</button>
+<span class="text-[10px] font-bold text-[#131b2e] mt-0.5 tracking-tight">Specialties</span>
+</div>
+<!-- Tab 4: Hospitals -->
+        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#hospitals">
+<i class="fa-regular fa-hospital text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
+<span class="text-[10px] font-medium tracking-tight leading-none text-[#3e484d]">Hospitals</span>
+</a>
+<!-- Tab 5: Join Doctor App -->
+        <a class="flex-1 flex flex-col items-center gap-0.5 group py-0.5 active:scale-95 transition" href="#join">
+<i class="fa-solid fa-user-doctor text-[18px] text-[#6e797e] group-hover:text-[#00647c] transition-colors"></i>
+<span class="text-[10px] font-medium tracking-tight text-center leading-3 text-[#3e484d]">Join Doctor<br/>App</span>
+</a>
+</div>
+<!-- iOS Home Indicator / Gesture Bar -->
+<div class="w-24 h-1 bg-slate-300 rounded-full mx-auto mt-1"></div>
+</nav>
+<!-- END: BottomNavigationDock -->
+</div>
+<script>
+  (function () {
+    var tabs = document.querySelectorAll('.tab-btn');
+    var panels = document.querySelectorAll('.page-panel');
+    var appHeader = document.getElementById('appHeader');
+
+    function showPage(name) {
+      var tabName = (name === 'profile') ? 'doctor' : name;
+      tabs.forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-page') === tabName);
+      });
+      panels.forEach(function (p) {
+        var match = p.getAttribute('data-panel') === name;
+        p.classList.toggle('hidden', !match);
+        if (match) {
+          p.style.animation = 'none';
+          void p.offsetWidth;
+          p.style.animation = '';
+        }
+      });
+      if (appHeader) {
+        appHeader.classList.toggle('header-light', name !== 'home');
+      }
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        showPage(tab.getAttribute('data-page'));
+      });
+    });
+
+    var searchBtn = document.getElementById('topSearchBtn');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+        showPage('symptom');
+      });
+    }
+
+    var doctors = [
+      { name: 'Dr. Ayesha Khan', spec: 'General Physician', yrs: 9, rating: '4.9', reviews: '1.2K', fee: '1,500', online: '1,200', loc: 'City Care Clinic, Lahore', likes: '12.4K', comments: '342', img: 'https://images.unsplash.com/photo-1706565029539-d09af5896340?auto=format&fit=crop&w=900&q=80', quote: 'Tips for staying healthy this flu season. Book a check-up today.' },
+      { name: 'Dr. Bilal Ahmed', spec: 'Cardiologist', yrs: 14, rating: '4.8', reviews: '980', fee: '2,500', online: '1,800', loc: 'Heart Care Hospital, Lahore', likes: '9.1K', comments: '276', img: 'https://images.unsplash.com/photo-1642975967602-653d378f3b5b?auto=format&fit=crop&w=900&q=80', quote: 'Regular heart screening saves lives. Get your ECG done today.' },
+      { name: 'Dr. Sana Malik', spec: 'Dermatologist', yrs: 7, rating: '4.7', reviews: '640', fee: '1,800', online: '1,300', loc: 'Glow Skin Clinic, Lahore', likes: '7.6K', comments: '198', img: 'https://images.unsplash.com/photo-1659353888906-adb3e0041693?auto=format&fit=crop&w=900&q=80', quote: 'Protect your skin from the sun. SPF every single day.' },
+      { name: 'Dr. Usman Tariq', spec: 'Orthopedic Surgeon', yrs: 11, rating: '4.8', reviews: '810', fee: '2,000', online: '1,500', loc: 'Bone & Joint Center, Lahore', likes: '6.9K', comments: '221', img: 'https://images.unsplash.com/photo-1645066928295-2506defde470?auto=format&fit=crop&w=900&q=80', quote: 'Struggling with knee pain? A quick assessment can help.' },
+      { name: 'Dr. Hina Raza', spec: 'Pediatrician', yrs: 8, rating: '4.9', reviews: '1.4K', fee: '1,500', online: '1,100', loc: 'Little Stars Clinic, Lahore', likes: '11.2K', comments: '389', img: 'https://images.unsplash.com/photo-1678695972687-033fa0bdbac9?auto=format&fit=crop&w=900&q=80', quote: "Your child's health is my priority. Timely vaccinations matter." },
+      { name: 'Dr. Faisal Iqbal', spec: 'Neurologist', yrs: 16, rating: '4.6', reviews: '520', fee: '3,000', online: '2,200', loc: 'Neuro Care Institute, Lahore', likes: '5.4K', comments: '154', img: 'https://images.unsplash.com/photo-1659353888306-e06177765540?auto=format&fit=crop&w=900&q=80', quote: 'Frequent headaches or dizziness? Get evaluated by a specialist.' },
+      { name: 'Dr. Maryam Shah', spec: 'Gynecologist', yrs: 12, rating: '4.9', reviews: '1.1K', fee: '2,200', online: '1,700', loc: 'Mother & Child Hospital, Lahore', likes: '10.8K', comments: '412', img: 'https://images.unsplash.com/photo-1659353888818-0e41520d086a?auto=format&fit=crop&w=900&q=80', quote: "Complete women's care in a safe and comfortable environment." },
+      { name: 'Dr. Hamza Sheikh', spec: 'ENT Specialist', yrs: 6, rating: '4.5', reviews: '430', fee: '1,400', online: '1,000', loc: 'Clear Tone ENT Clinic, Lahore', likes: '4.7K', comments: '132', img: 'https://images.unsplash.com/photo-1758691463626-0ab959babe00?auto=format&fit=crop&w=900&q=80', quote: 'Ear, nose or throat trouble? Quick relief starts here.' },
+      { name: 'Dr. Zainab Ali', spec: 'Ophthalmologist', yrs: 10, rating: '4.7', reviews: '720', fee: '1,900', online: '1,400', loc: 'Bright Vision Eye Center, Lahore', likes: '6.1K', comments: '187', img: 'https://images.unsplash.com/photo-1623854767648-e7bb8009f0db?auto=format&fit=crop&w=900&q=80', quote: 'Blurry vision should never be ignored. Book an eye exam.' },
+      { name: 'Dr. Omar Farooq', spec: 'Gastroenterologist', yrs: 13, rating: '4.8', reviews: '870', fee: '2,600', online: '1,900', loc: 'Digestive Health Clinic, Lahore', likes: '7.3K', comments: '243', img: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80', quote: 'Persistent stomach issues? Let us find the root cause.' },
+      { name: 'Dr. Fatima Noor', spec: 'Endocrinologist', yrs: 8, rating: '4.6', reviews: '560', fee: '2,100', online: '1,600', loc: 'Hormone Care Clinic, Lahore', likes: '5.2K', comments: '164', img: 'https://images.unsplash.com/photo-1758691462493-120a069304e6?auto=format&fit=crop&w=900&q=80', quote: 'Managing diabetes or thyroid? Personalized care available.' },
+      { name: 'Dr. Danish Raza', spec: 'Pulmonologist', yrs: 9, rating: '4.5', reviews: '490', fee: '1,700', online: '1,250', loc: 'Breathe Easy Clinic, Lahore', likes: '4.9K', comments: '141', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=80', quote: 'Asthma or breathing trouble? Get expert lung care now.' },
+      { name: 'Dr. Iqra Javed', spec: 'Psychiatrist', yrs: 7, rating: '4.8', reviews: '680', fee: '2,300', online: '1,750', loc: 'Mind Wellness Center, Lahore', likes: '8.4K', comments: '298', img: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=900&q=80', quote: 'Your mental health matters. Talk to a caring specialist.' },
+      { name: 'Dr. Saad Mehmood', spec: 'Urologist', yrs: 15, rating: '4.7', reviews: '740', fee: '2,800', online: '2,000', loc: 'Uro Care Hospital, Lahore', likes: '5.8K', comments: '176', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80', quote: 'Confidential urology care with advanced treatment options.' },
+      { name: 'Dr. Areeba Siddiqui', spec: 'Rheumatologist', yrs: 6, rating: '4.4', reviews: '380', fee: '1,600', online: '1,150', loc: 'Joint Relief Clinic, Lahore', likes: '4.1K', comments: '118', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=80', quote: 'Joint stiffness or swelling? Early treatment prevents damage.' },
+      { name: 'Dr. Talha Aslam', spec: 'Nephrologist', yrs: 12, rating: '4.6', reviews: '610', fee: '2,400', online: '1,800', loc: 'Kidney Care Center, Lahore', likes: '5.6K', comments: '169', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80', quote: 'Protect your kidneys with regular check-ups and expert advice.' },
+      { name: 'Dr. Nimra Butt', spec: 'Dentist', yrs: 5, rating: '4.7', reviews: '520', fee: '1,200', online: '900', loc: 'Smile Dental Studio, Lahore', likes: '6.4K', comments: '203', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80', quote: 'A healthy smile starts with a routine dental visit.' },
+      { name: 'Dr. Kamran Yousaf', spec: 'Neurosurgeon', yrs: 18, rating: '4.9', reviews: '430', fee: '3,500', online: '2,600', loc: 'Advanced Neuro Hospital, Lahore', likes: '5.1K', comments: '147', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=900&q=80', quote: 'Advanced neurosurgical care with a compassionate approach.' },
+      { name: 'Dr. Rabia Anwar', spec: 'Oncologist', yrs: 14, rating: '4.8', reviews: '690', fee: '3,200', online: '2,400', loc: 'Hope Cancer Center, Lahore', likes: '7.9K', comments: '264', img: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=900&q=80', quote: 'Comprehensive cancer care with hope and dignity.' },
+      { name: 'Dr. Junaid Khan', spec: 'General Surgeon', yrs: 10, rating: '4.5', reviews: '470', fee: '2,000', online: '1,500', loc: 'Surgical Care Hospital, Lahore', likes: '4.6K', comments: '136', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=900&q=80', quote: 'Trusted surgical care with modern minimally invasive options.' }
+    ];
+
+    function dockBtn(icon, color, label, cls) {
+      return '<div class="' + (cls ? cls + ' ' : '') + 'flex flex-col items-center gap-1">' +
+        '<div class="w-11 h-11 flex items-center justify-center active:scale-90 transition">' +
+        '<i class="fa-solid ' + icon + ' text-xl ' + color + ' drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]"></i>' +
+        '</div>' +
+        '<span class="text-[10px] font-bold text-white tracking-tight" style="text-shadow:0 1px 3px rgba(0,0,0,0.9)">' + label + '</span>' +
+        '</div>';
+    }
+
+    function slideHTML(d) {
+      return '<section class="relative h-full w-full shrink-0 snap-start snap-always overflow-hidden">' +
+        '<img alt="' + d.name + '" class="reel-img absolute inset-0 w-full h-full object-cover object-top" src="' + d.img + '" loading="lazy" decoding="async" draggable="false"/>' +
+        '<div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-[#0b1220]/95"></div>' +
+        '<div class="relative h-full flex flex-col justify-end px-4 pt-16 pb-24">' +
+        '<div class="flex items-end gap-3">' +
+        '<div class="flex-1 min-w-0">' +
+        '<img alt="' + d.name + '" class="reel-img w-16 h-16 rounded-full object-cover object-top ring-2 ring-white/80 shadow-lg mb-2.5" src="' + d.img + '" loading="lazy" decoding="async" draggable="false"/>' +
+        '<div class="flex items-center gap-2">' +
+        '<h2 class="text-xl font-bold tracking-tight text-white font-display truncate">' + d.name + '</h2>' +
+        '<i class="fa-solid fa-circle-check text-cyan-300 text-sm shrink-0"></i>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 mt-1.5">' +
+        '<span class="text-[11px] font-bold text-white bg-white/15 border border-white/25 px-2.5 py-0.5 rounded-full">' + d.spec + '</span>' +
+        '<span class="text-[11px] font-semibold text-white/70">' + d.yrs + ' yrs exp.</span>' +
+        '</div>' +
+        '<p class="text-[12px] leading-snug text-white/80 font-medium max-w-[260px] mt-2">' + d.quote + '</p>' +
+        '<div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] font-semibold text-white">' +
+        '<span class="flex items-center gap-1"><i class="fa-solid fa-star text-amber-400"></i>' + d.rating + ' <span class="text-white/60 font-normal">(' + d.reviews + ')</span></span>' +
+        '<span class="flex items-center gap-1"><i class="fa-solid fa-location-dot text-cyan-300"></i>' + d.loc + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<aside class="flex flex-col items-center gap-3 pb-1 shrink-0">' +
+        dockBtn('fa-heart', 'text-white', d.likes, 'like-btn') +
+        dockBtn('fa-comment-dots', 'text-white', d.comments) +
+        dockBtn('fa-phone', 'text-white', 'Call') +
+        dockBtn('fa-share-nodes', 'text-white', 'Share') +
+        '</aside>' +
+        '</div>' +
+        '<div class="grid grid-cols-2 gap-2.5 mt-3.5">' +
+        '<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-[#00647c] hover:bg-[#004e61] active:scale-[0.98] text-white rounded-xl shadow-md transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold"><i class="fa-solid fa-hospital text-sm"></i><span>Clinic Check-up</span></div><span class="text-[11px] font-medium text-cyan-100">Rs. ' + d.fee + '</span></button>' +
+        '<button class="flex flex-col items-center justify-center py-2.5 px-2 bg-white/95 hover:bg-white active:scale-[0.98] rounded-xl shadow-md transition" type="button"><div class="flex items-center gap-1.5 text-xs font-bold text-[#00647c]"><i class="fa-solid fa-video text-sm"></i><span class="text-[#131b2e]">Online Check-up</span></div><span class="text-[11px] font-semibold text-[#3e484d]">Rs. ' + d.online + '</span></button>' +
+        '</div>' +
+        '</div>' +
+        '</section>';
+    }
+
+    var homeFeed = document.getElementById('homeFeed');
+    if (homeFeed) {
+      var feedHTML = '';
+      for (var i = 0; i < doctors.length; i++) {
+        feedHTML += slideHTML(doctors[i]);
+      }
+      homeFeed.innerHTML = feedHTML;
+
+      homeFeed.addEventListener('click', function (e) {
+        var likeBtn = e.target.closest('.like-btn');
+        if (likeBtn) { likeBtn.classList.toggle('liked'); }
+      });
+
+      var reelImgs = homeFeed.querySelectorAll('img.reel-img');
+      Array.prototype.forEach.call(reelImgs, function (img) {
+        function reveal() { img.classList.add('reel-img-ready'); }
+        if (img.complete && img.naturalWidth > 0) {
+          reveal();
+        } else {
+          img.addEventListener('load', reveal);
+          img.addEventListener('error', reveal);
+        }
+      });
+
+      var homePanel = document.querySelector('.page-panel[data-panel="home"]');
+      window.addEventListener('keydown', function (e) {
+        if (homePanel && homePanel.classList.contains('hidden')) return;
+        var step = homeFeed.clientHeight;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+          homeFeed.scrollBy({ top: step, behavior: 'smooth' });
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+          homeFeed.scrollBy({ top: -step, behavior: 'smooth' });
+          e.preventDefault();
+        }
+      });
+    }
+
+    var urduNames = {
+      'Dr. Ayesha Khan': 'ڈاکٹر عائشہ خان',
+      'Dr. Bilal Ahmed': 'ڈاکٹر بلال احمد',
+      'Dr. Sana Malik': 'ڈاکٹر ثنا ملک',
+      'Dr. Usman Tariq': 'ڈاکٹر عثمان طارق',
+      'Dr. Hina Raza': 'ڈاکٹر حنا رضا',
+      'Dr. Faisal Iqbal': 'ڈاکٹر فیصل اقبال',
+      'Dr. Maryam Shah': 'ڈاکٹر مریم شاہ',
+      'Dr. Hamza Sheikh': 'ڈاکٹر حمزہ شیخ',
+      'Dr. Zainab Ali': 'ڈاکٹر زینب علی',
+      'Dr. Omar Farooq': 'ڈاکٹر عمر فاروق',
+      'Dr. Fatima Noor': 'ڈاکٹر فاطمہ نور',
+      'Dr. Danish Raza': 'ڈاکٹر دانش رضا',
+      'Dr. Iqra Javed': 'ڈاکٹر اقراء جاوید',
+      'Dr. Saad Mehmood': 'ڈاکٹر سعد محمود',
+      'Dr. Areeba Siddiqui': 'ڈاکٹر اریبہ صدیقی',
+      'Dr. Talha Aslam': 'ڈاکٹر طلحہ اسلم',
+      'Dr. Nimra Butt': 'ڈاکٹر نمرہ بٹ',
+      'Dr. Kamran Yousaf': 'ڈاکٹر کامران یوسف',
+      'Dr. Rabia Anwar': 'ڈاکٹر رابعہ انور',
+      'Dr. Junaid Khan': 'ڈاکٹر جنید خان'
+    };
+
+    function setText(id, val) {
+      var el = document.getElementById(id);
+      if (el) { el.textContent = val; }
+    }
+
+    function openProfile(name) {
+      var d = null;
+      for (var i = 0; i < doctors.length; i++) {
+        if (doctors[i].name === name) { d = doctors[i]; break; }
+      }
+      if (!d) { return; }
+      var hero = document.getElementById('profileHero');
+      var avatar = document.getElementById('profileAvatar');
+      if (hero) { hero.src = d.img; }
+      if (avatar) { avatar.src = d.img; }
+      setText('profileName', d.name);
+      setText('profileUrdu', urduNames[d.name] || '');
+      setText('profileSpec', d.spec + ' \u00b7 ' + d.yrs + ' yrs experience');
+      setText('statRating', d.rating);
+      setText('statYears', d.yrs);
+      setText('statReviews', d.reviews);
+      setText('profileAbout', d.quote + ' ' + d.name + ' has ' + d.yrs + ' years of experience in ' + d.spec.toLowerCase() + ' care and has helped thousands of patients live healthier lives.');
+      setText('profileLoc', d.loc);
+      setText('profileFee', d.fee);
+      setText('profileOnline', d.online);
+      setText('ctaFee', d.fee);
+      setText('ctaOnline', d.online);
+      showPage('profile');
+      var profPanel = document.querySelector('.page-panel[data-panel="profile"]');
+      if (profPanel) { profPanel.scrollTop = 0; }
+    }
+
+    var doctorPanel = document.querySelector('.page-panel[data-panel="doctor"]');
+    if (doctorPanel) {
+      doctorPanel.addEventListener('click', function (e) {
+        var card = e.target.closest('button');
+        if (!card) { return; }
+        var h3 = card.querySelector('h3');
+        if (h3) { openProfile(h3.textContent.trim()); }
+      });
+    }
+
+    var backBtn = document.getElementById('profileBack');
+    if (backBtn) {
+      backBtn.addEventListener('click', function () { showPage('doctor'); });
+    }
+  })();
+</script>
+</body></html>
