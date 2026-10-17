@@ -1266,6 +1266,26 @@
 </div>
 </nav>
 <!-- END: BottomNavigationDock -->
+<!-- BEGIN: CommentSheet (TikTok-style) -->
+<div class="absolute inset-0 z-[60] hidden" id="commentSheet">
+<div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300" id="commentBackdrop"></div>
+<div class="absolute left-0 right-0 bottom-0 h-[72%] max-h-[80%] bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.25)] flex flex-col translate-y-full transition-transform duration-300 ease-out" id="commentPanel">
+<div class="shrink-0 px-4 pt-2.5 pb-2 border-b border-slate-100">
+<div class="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-2.5"></div>
+<div class="flex items-center justify-between">
+<h3 class="text-[14px] font-bold tracking-tight text-[#131b2e] font-display" id="commentTitle">Comments</h3>
+<button class="w-8 h-8 flex items-center justify-center rounded-full text-[#6e797e] hover:bg-slate-100 active:scale-90 transition" id="commentClose" type="button" aria-label="Close comments"><i class="fa-solid fa-xmark text-[16px]"></i></button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-4" id="commentList"></div>
+<div class="shrink-0 px-3 py-2.5 border-t border-slate-100 bg-white flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-[#00647c] flex items-center justify-center text-white text-[11px] font-bold shrink-0">Y</div>
+<input class="flex-1 min-w-0 bg-[#f1f3f7] rounded-full px-4 py-2.5 text-[13px] text-[#131b2e] placeholder-[#8b9599] outline-none focus:ring-2 focus:ring-[#00647c]/30 transition" id="commentInput" placeholder="Add a comment..." type="text" autocomplete="off"/>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-[#00647c] text-white active:scale-90 transition shrink-0" id="commentSend" type="button" aria-label="Send comment"><i class="fa-solid fa-paper-plane text-[14px]"></i></button>
+</div>
+</div>
+</div>
+<!-- END: CommentSheet -->
 </div>
 <script>
   (function () {
@@ -1403,7 +1423,7 @@
         '<aside class="flex flex-col items-center gap-3 pb-1 shrink-0">' +
         '<img alt="' + d.name + '" class="reel-img slide-profile cursor-pointer w-12 h-12 rounded-full object-cover object-top ring-2 ring-white/90 shadow-lg" src="' + d.img + '" data-dname="' + d.name + '" loading="lazy" decoding="async" draggable="false"/>' +
         dockBtn('fa-heart', 'text-white', d.likes, 'like-btn') +
-        dockBtn('fa-comment-dots', 'text-white', d.comments) +
+        dockBtn('fa-comment-dots', 'text-white', d.comments, 'comment-btn') +
         dockBtn('fa-phone', 'text-white', 'Call') +
         dockBtn('fa-share-nodes', 'text-white', 'Share') +
         '</aside>' +
@@ -1428,7 +1448,14 @@
         var prof = e.target.closest('.slide-profile');
         if (prof) { openProfile(prof.getAttribute('data-dname')); return; }
         var likeBtn = e.target.closest('.like-btn');
-        if (likeBtn) { likeBtn.classList.toggle('liked'); }
+        if (likeBtn) { likeBtn.classList.toggle('liked'); return; }
+        var cmtBtn = e.target.closest('.comment-btn');
+        if (cmtBtn) {
+          var slide = cmtBtn.closest('section');
+          var profEl = slide ? slide.querySelector('.slide-profile') : null;
+          openComments(profEl ? profEl.getAttribute('data-dname') : '');
+          return;
+        }
       });
 
       var reelImgs = homeFeed.querySelectorAll('img.reel-img');
@@ -1702,6 +1729,128 @@
     var ptabBtns = document.querySelectorAll('.ptab-btn');
     for (var t = 0; t < ptabBtns.length; t++) {
       ptabBtns[t].addEventListener('click', function () { setProfileTab(this.getAttribute('data-ptab')); });
+    }
+
+    // ---- Comments (TikTok-style) ----
+    var commentStore = {};
+    var commentSeeds = [
+      { user: 'Ayesha Malik', text: 'Great advice, thank you so much!', time: '2h', likes: 124 },
+      { user: 'Bilal Hussain', text: 'Visited last week, very professional and caring.', time: '5h', likes: 88 },
+      { user: 'Hira Shahid', text: 'How much is the consultation fee?', time: '1d', likes: 23 },
+      { user: 'Usman Ghani', text: 'Highly recommended for everyone in the family.', time: '1d', likes: 41 },
+      { user: 'Fatima Zafar', text: 'Please make a detailed video on diet too.', time: '2d', likes: 67 },
+      { user: 'Saad Khan', text: 'Just booked my appointment, thanks a lot!', time: '3d', likes: 12 }
+    ];
+    var avatarColors = ['#00647c', '#7c3aed', '#db2777', '#ea580c', '#0891b2', '#16a34a'];
+
+    function escapeHtml(t) {
+      return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function initialsOf(n) {
+      var p = String(n).trim().split(/\s+/);
+      var a = p[0] ? p[0].charAt(0) : '';
+      var b = p[1] ? p[1].charAt(0) : '';
+      return (a + b).toUpperCase() || '?';
+    }
+    function colorFor(n) {
+      var sum = 0; for (var i = 0; i < n.length; i++) { sum += n.charCodeAt(i); }
+      return avatarColors[sum % avatarColors.length];
+    }
+    function getComments(name) {
+      if (!commentStore[name]) {
+        commentStore[name] = commentSeeds.map(function (c) {
+          return { user: c.user, text: c.text, time: c.time, likes: c.likes, liked: false };
+        });
+      }
+      return commentStore[name];
+    }
+    function renderComments(name) {
+      var list = document.getElementById('commentList');
+      var title = document.getElementById('commentTitle');
+      if (!list) { return; }
+      var arr = getComments(name);
+      if (title) { title.textContent = arr.length + (arr.length === 1 ? ' comment' : ' comments'); }
+      var html = '';
+      for (var i = 0; i < arr.length; i++) {
+        var c = arr[i];
+        html += '<div class="flex gap-3">' +
+          '<div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] font-bold shrink-0" style="background:' + colorFor(c.user) + '">' + initialsOf(c.user) + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+          '<p class="text-[11px] font-bold text-[#6e797e]">' + escapeHtml(c.user) + '</p>' +
+          '<p class="text-[13px] text-[#131b2e] mt-0.5 leading-snug break-words">' + escapeHtml(c.text) + '</p>' +
+          '<div class="flex items-center gap-4 mt-1.5 text-[11px] font-semibold text-[#8b9599]"><span>' + escapeHtml(c.time) + '</span><span>Reply</span></div>' +
+          '</div>' +
+          '<button class="comment-like flex flex-col items-center gap-0.5 shrink-0 ' + (c.liked ? 'text-[#f43f5e]' : 'text-[#8b9599]') + '" type="button" data-ci="' + i + '">' +
+          '<i class="' + (c.liked ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[15px]"></i>' +
+          '<span class="text-[10px] font-semibold">' + c.likes + '</span>' +
+          '</button>' +
+          '</div>';
+      }
+      list.innerHTML = html;
+    }
+    var currentCommentName = '';
+    function openComments(name) {
+      var sheet = document.getElementById('commentSheet');
+      if (!sheet) { return; }
+      currentCommentName = name || '';
+      renderComments(currentCommentName);
+      sheet.classList.remove('hidden');
+      var panel = document.getElementById('commentPanel');
+      var bd = document.getElementById('commentBackdrop');
+      void sheet.offsetWidth;
+      if (bd) { bd.classList.remove('opacity-0'); bd.classList.add('opacity-100'); }
+      if (panel) { panel.classList.remove('translate-y-full'); panel.classList.add('translate-y-0'); }
+      var listEl = document.getElementById('commentList');
+      if (listEl) { listEl.scrollTop = 0; }
+    }
+    function closeComments() {
+      var sheet = document.getElementById('commentSheet');
+      if (!sheet) { return; }
+      var panel = document.getElementById('commentPanel');
+      var bd = document.getElementById('commentBackdrop');
+      if (bd) { bd.classList.remove('opacity-100'); bd.classList.add('opacity-0'); }
+      if (panel) { panel.classList.remove('translate-y-0'); panel.classList.add('translate-y-full'); }
+      setTimeout(function () { sheet.classList.add('hidden'); }, 280);
+    }
+    function sendComment() {
+      var inp = document.getElementById('commentInput');
+      if (!inp) { return; }
+      var val = inp.value.trim();
+      if (!val) { return; }
+      var arr = getComments(currentCommentName);
+      arr.unshift({ user: 'You', text: val, time: 'now', likes: 0, liked: false });
+      inp.value = '';
+      renderComments(currentCommentName);
+      var listEl = document.getElementById('commentList');
+      if (listEl) { listEl.scrollTop = 0; }
+    }
+
+    var commentCloseBtn = document.getElementById('commentClose');
+    if (commentCloseBtn) { commentCloseBtn.addEventListener('click', closeComments); }
+    var commentBackdropEl = document.getElementById('commentBackdrop');
+    if (commentBackdropEl) { commentBackdropEl.addEventListener('click', closeComments); }
+    var commentSendBtn = document.getElementById('commentSend');
+    if (commentSendBtn) { commentSendBtn.addEventListener('click', sendComment); }
+    var commentInputEl = document.getElementById('commentInput');
+    if (commentInputEl) {
+      commentInputEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); sendComment(); }
+      });
+    }
+    var commentListEl = document.getElementById('commentList');
+    if (commentListEl) {
+      commentListEl.addEventListener('click', function (e) {
+        var lb = e.target.closest('.comment-like');
+        if (!lb) { return; }
+        var idx = parseInt(lb.getAttribute('data-ci'), 10);
+        var arr = getComments(currentCommentName);
+        if (!arr[idx]) { return; }
+        arr[idx].liked = !arr[idx].liked;
+        arr[idx].likes += arr[idx].liked ? 1 : -1;
+        var st = commentListEl.scrollTop;
+        renderComments(currentCommentName);
+        commentListEl.scrollTop = st;
+      });
     }
   })();
 </script>
