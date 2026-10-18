@@ -78,6 +78,7 @@
     .bnav-item.active .bnav-bar { display: none; }
     .bnav-item .bnav-avatar { width: 26px; height: 26px; border-radius: 9999px; object-fit: cover; object-position: top; display: block; filter: grayscale(1); opacity: 0.6; box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.75); transition: filter .2s, opacity .2s, box-shadow .2s; }
     .bnav-item.active .bnav-avatar { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px #ffffff; }
+    .join-form .field-invalid { border-color: #e11d48 !important; }
   </style>
 <style data-purpose="animations">
     @keyframes marquee {
@@ -920,7 +921,7 @@
 </button>
 <button class="flex flex-col items-center gap-2 bg-white rounded-2xl border border-slate-200 shadow-sm py-4 px-2 active:scale-[0.97] transition" type="button">
 <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ea580c] to-[#fb923c] flex items-center justify-center text-white shadow-md">
-<i class="fa-solid fa-stomach text-lg"></i>
+<i class="fa-solid fa-notes-medical text-lg"></i>
 </div>
 <span class="text-[12px] font-bold text-[#131b2e] text-center leading-tight">Gastroenterology</span>
 <span class="text-[10px] font-semibold text-[#6e797e]">44 doctors</span>
@@ -1068,7 +1069,7 @@
 <span class="text-[#131b2e] text-[12px] font-bold">Back Pain</span>
 </button>
 <button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
-<i class="fa-solid fa-stomach text-[#00647c] text-xs"></i>
+<i class="fa-solid fa-notes-medical text-[#00647c] text-xs"></i>
 <span class="text-[#131b2e] text-[12px] font-bold">Stomach Pain</span>
 </button>
 <button class="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition" type="button">
@@ -1245,19 +1246,19 @@
 <button id="joinBack" aria-label="Go back" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm active:scale-95 transition" type="button"><i class="fa-solid fa-arrow-left text-[13px] text-[#131b2e]"></i></button>
 <div class="min-w-0">
 <h2 class="text-[19px] font-bold tracking-tight text-[#131b2e] font-display leading-tight">Join Us</h2>
-<p class="text-[11.5px] text-[#6e797e] font-semibold leading-snug mt-0.5">Pick a role and start working with Aazaz</p>
+<p class="text-[11.5px] text-[#6e797e] font-semibold leading-snug mt-0.5">Pick a role and start working with us</p>
 </div>
 </div>
 <div class="rounded-3xl p-4 mb-4 text-white shadow-lg shadow-teal-900/20" style="background-image:linear-gradient(135deg,#004e61 0%,#00647c 55%,#0091ad 100%)">
 <p class="text-[12px] font-semibold text-white/80">Become a partner</p>
-<p class="text-[17px] font-bold font-display tracking-tight leading-snug mt-0.5">4 ways to grow with Aazaz Health</p>
+<p class="text-[17px] font-bold font-display tracking-tight leading-snug mt-0.5">4 ways to grow with our platform</p>
 <div class="flex items-center gap-2 mt-3">
 <span class="inline-flex items-center gap-1.5 text-[10.5px] font-semibold bg-white/15 rounded-full px-2.5 py-1"><i class="fa-solid fa-circle-check text-[10px]"></i>Free to join</span>
 <span class="inline-flex items-center gap-1.5 text-[10.5px] font-semibold bg-white/15 rounded-full px-2.5 py-1"><i class="fa-solid fa-clock text-[10px]"></i>24h approval</span>
 </div>
 </div>
 <div class="flex flex-col gap-3" id="joinOptions">
-<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="doctor" data-msg="Doctor registration opens soon - we will notify you.">
+<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="doctor">
 <span class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#00647c,#00a2c0)"><i class="fa-solid fa-user-doctor text-[19px]"></i></span>
 <span class="flex-1 min-w-0">
 <span class="block text-[14px] font-bold text-[#131b2e] tracking-tight">Join as a Doctor</span>
@@ -1265,7 +1266,7 @@
 </span>
 <span class="w-8 h-8 rounded-full bg-[#f1f3f7] flex items-center justify-center shrink-0 text-[#00647c] transition group-active:scale-90"><i class="fa-solid fa-chevron-right text-[12px]"></i></span>
 </button>
-<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="member" data-msg="Member registration opens soon - we will notify you.">
+<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="member">
 <span class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#6d28d9,#8b5cf6)"><i class="fa-solid fa-user-plus text-[19px]"></i></span>
 <span class="flex-1 min-w-0">
 <span class="block text-[14px] font-bold text-[#131b2e] tracking-tight">Join as a Member</span>
@@ -1273,7 +1274,7 @@
 </span>
 <span class="w-8 h-8 rounded-full bg-[#f1f3f7] flex items-center justify-center shrink-0 text-[#00647c] transition group-active:scale-90"><i class="fa-solid fa-chevron-right text-[12px]"></i></span>
 </button>
-<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="store" data-msg="Medical store registration opens soon - we will notify you.">
+<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="store">
 <span class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#ea580c,#f59e0b)"><i class="fa-solid fa-pills text-[19px]"></i></span>
 <span class="flex-1 min-w-0">
 <span class="block text-[14px] font-bold text-[#131b2e] tracking-tight">Join as a Medical Store</span>
@@ -1281,7 +1282,7 @@
 </span>
 <span class="w-8 h-8 rounded-full bg-[#f1f3f7] flex items-center justify-center shrink-0 text-[#00647c] transition group-active:scale-90"><i class="fa-solid fa-chevron-right text-[12px]"></i></span>
 </button>
-<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="lab" data-msg="Laboratory registration opens soon - we will notify you.">
+<button class="group w-full text-left bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 flex items-center gap-3 active:scale-[0.99] transition" type="button" data-join="lab">
 <span class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#047857,#34d399)"><i class="fa-solid fa-vials text-[19px]"></i></span>
 <span class="flex-1 min-w-0">
 <span class="block text-[14px] font-bold text-[#131b2e] tracking-tight">Join as a Laboratory</span>
@@ -1340,7 +1341,7 @@
 <span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#6d28d9,#8b5cf6)"><i class="fa-solid fa-user-plus text-[17px]"></i></span>
 <div class="min-w-0">
 <h2 class="text-[16.5px] font-bold tracking-tight text-[#131b2e] font-display leading-tight">Join as a Member</h2>
-<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">Create your patient account with Aazaz</p>
+<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">Create your patient account in seconds</p>
 </div>
 </div>
 <form class="join-form flex flex-col gap-3.5" novalidate>
@@ -1377,7 +1378,7 @@
 <span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#ea580c,#f59e0b)"><i class="fa-solid fa-pills text-[17px]"></i></span>
 <div class="min-w-0">
 <h2 class="text-[16.5px] font-bold tracking-tight text-[#131b2e] font-display leading-tight">Join as a Medical Store</h2>
-<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">List your pharmacy on Aazaz Health</p>
+<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">List your pharmacy with us</p>
 </div>
 </div>
 <form class="join-form flex flex-col gap-3.5" novalidate>
@@ -1418,7 +1419,7 @@
 <span class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 text-white shadow-md" style="background-image:linear-gradient(135deg,#047857,#34d399)"><i class="fa-solid fa-vials text-[17px]"></i></span>
 <div class="min-w-0">
 <h2 class="text-[16.5px] font-bold tracking-tight text-[#131b2e] font-display leading-tight">Join as a Laboratory</h2>
-<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">Publish your test packages on Aazaz</p>
+<p class="text-[11px] text-[#6e797e] font-semibold leading-snug mt-0.5">Publish your test packages with us</p>
 </div>
 </div>
 <form class="join-form flex flex-col gap-3.5" novalidate>
@@ -1455,7 +1456,7 @@
 </main>
 <!-- END: PagesContainer -->
 <!-- BEGIN: BottomNavigationDock -->
-<nav class="relative z-30 mx-3 mb-3 bg-[#131b2e]/90 backdrop-blur-xl rounded-[26px] border border-white/10 px-2 pt-2 pb-2 shadow-[0_16px_40px_rgba(2,6,23,0.45)]" data-purpose="mobile-navigation">
+<nav class="relative z-30 mx-3 my-3 bg-[#131b2e]/90 backdrop-blur-xl rounded-[26px] border border-white/10 px-2 pt-2 pb-2 shadow-[0_16px_40px_rgba(2,6,23,0.45)]" data-purpose="mobile-navigation">
 <div class="flex items-center justify-between text-[#6e797e]">
 <!-- Tab 1: Home -->
         <a class="bnav-item active flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#home" data-navpage="home">
@@ -2127,7 +2128,7 @@
         var inputs = form.querySelectorAll('[required]');
         Array.prototype.forEach.call(inputs, function (inp) {
           var bad = !inp.value.trim();
-          inp.style.borderColor = bad ? '#e11d48' : '';
+          inp.classList.toggle('field-invalid', bad);
           if (bad) { ok = false; }
         });
         if (!ok) { showToast('Please fill the required fields'); return; }
