@@ -1042,7 +1042,7 @@
 <span class="text-[11px] font-semibold text-[#6e797e]">Find care fast</span>
 </div>
 <div class="relative flex items-center mb-3">
-<input class="w-full py-2.5 pl-4 pr-10 bg-white placeholder-[#8b9599] text-[#131b2e] text-[13px] rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00647c]/40 transition" placeholder="Search symptoms..." type="text"/>
+<input aria-label="Search doctors" class="w-full py-2.5 pl-4 pr-10 bg-white placeholder-[#8b9599] text-[#131b2e] text-[13px] rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00647c]/40 transition cursor-pointer" id="symptomSearch" placeholder="Search doctor, city or hospital..." readonly type="text"/>
 <div class="absolute right-4 text-[#6e797e] pointer-events-none">
 <i class="fa-solid fa-magnifying-glass text-sm"></i>
 </div>
@@ -1113,6 +1113,31 @@
 </div>
 <i class="fa-solid fa-chevron-right text-[#6e797e] text-[11px] shrink-0"></i>
 </button>
+</div>
+</div>
+<!-- Page: Search -->
+<div class="page-panel absolute inset-0 overflow-y-auto bg-[#faf8ff] px-3.5 pt-3 pb-5 hidden" data-panel="search">
+<div class="flex items-center gap-2.5 mb-3">
+<button aria-label="Go back" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm active:scale-95 transition" id="searchBack" type="button"><i class="fa-solid fa-arrow-left text-[13px] text-[#131b2e]"></i></button>
+<div class="relative flex-1 flex items-center">
+<input aria-label="Search doctors" autocomplete="off" class="w-full py-2.5 pl-4 pr-10 bg-white placeholder-[#8b9599] text-[#131b2e] text-[13px] rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00647c]/40 transition" id="searchInput" placeholder="Doctor, city or hospital..." type="text"/>
+<button aria-label="Clear search" class="absolute right-2.5 w-6 h-6 hidden items-center justify-center rounded-full bg-slate-100 text-[#6e797e] active:scale-90 transition" id="searchClear" type="button"><i class="fa-solid fa-xmark text-[11px]"></i></button>
+</div>
+</div>
+<div class="text-[11px] font-bold uppercase tracking-wide text-[#6e797e] mb-2">Quick search</div>
+<div class="flex flex-wrap gap-2 mb-3" id="searchChips">
+<button class="search-chip px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition text-[12px] font-bold text-[#131b2e]" data-q="Lahore" type="button">Lahore</button>
+<button class="search-chip px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition text-[12px] font-bold text-[#131b2e]" data-q="Karachi" type="button">Karachi</button>
+<button class="search-chip px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition text-[12px] font-bold text-[#131b2e]" data-q="Islamabad" type="button">Islamabad</button>
+<button class="search-chip px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition text-[12px] font-bold text-[#131b2e]" data-q="Peshawar" type="button">Peshawar</button>
+<button class="search-chip px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm active:scale-95 transition text-[12px] font-bold text-[#131b2e]" data-q="Hospital" type="button">Hospital</button>
+</div>
+<div class="text-[11px] font-bold uppercase tracking-wide text-[#6e797e] mb-2 hidden" id="searchCount"></div>
+<div class="flex flex-col gap-2.5" id="searchResults"></div>
+<div class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center" id="searchEmpty">
+<span class="w-12 h-12 rounded-full bg-[#00647c]/10 text-[#00647c] inline-flex items-center justify-center mb-2"><i class="fa-solid fa-magnifying-glass text-[17px]"></i></span>
+<p class="text-[13px] font-bold text-[#131b2e]">No doctors found</p>
+<p class="text-[11.5px] font-semibold text-[#6e797e] mt-1">Try another doctor name, city or hospital.</p>
 </div>
 </div>
 <!-- Page: Help & Support -->
@@ -1523,9 +1548,11 @@
     var tabs = document.querySelectorAll('.tab-btn');
     var panels = document.querySelectorAll('.page-panel');
     var appHeader = document.getElementById('appHeader');
+    var currentPage = 'home';
 
     function showPage(name) {
       var tabName = (name === 'profile') ? 'doctor' : name;
+      currentPage = name;
       tabs.forEach(function (t) {
         t.classList.toggle('active', t.getAttribute('data-page') === tabName);
       });
@@ -1541,14 +1568,18 @@
       if (appHeader) {
         appHeader.classList.toggle('header-light', name !== 'home');
         var tabsRow = document.getElementById('headerTabs');
-        if (tabsRow) { tabsRow.classList.toggle('hidden', name === 'you' || name.indexOf('join') === 0); }
+        if (tabsRow) { tabsRow.classList.toggle('hidden', name === 'you' || name === 'search' || name.indexOf('join') === 0); }
       }
       var bnavs = document.querySelectorAll('.bnav-item');
       bnavs.forEach(function (b) {
         var p = b.getAttribute('data-navpage');
-        b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile') || (p === 'you' && name === 'help') || (p === 'home' && name.indexOf('join') === 0));
+        b.classList.toggle('active', p === name || (p === 'doctor' && name === 'profile') || (p === 'you' && name === 'help') || (p === 'home' && (name.indexOf('join') === 0 || name === 'search')));
       });
       if (name === 'nearby') { loadNearby(); }
+      if (name === 'search') {
+        renderSearch(searchInput ? searchInput.value : '');
+        if (searchInput) { setTimeout(function () { searchInput.focus(); }, 60); }
+      }
     }
 
     tabs.forEach(function (tab) {
@@ -1592,7 +1623,16 @@
     var searchBtn = document.getElementById('topSearchBtn');
     if (searchBtn) {
       searchBtn.addEventListener('click', function () {
-        showPage('symptom');
+        searchFrom = (currentPage && currentPage !== 'search') ? currentPage : 'home';
+        showPage('search');
+      });
+    }
+
+    var symptomSearch = document.getElementById('symptomSearch');
+    if (symptomSearch) {
+      symptomSearch.addEventListener('click', function () {
+        searchFrom = (currentPage && currentPage !== 'search') ? currentPage : 'symptom';
+        showPage('search');
       });
     }
 
@@ -1962,6 +2002,83 @@
     var ptabBtns = document.querySelectorAll('.ptab-btn');
     for (var t = 0; t < ptabBtns.length; t++) {
       ptabBtns[t].addEventListener('click', function () { setProfileTab(this.getAttribute('data-ptab')); });
+    }
+
+    // ---- Search page ----
+    var searchFrom = 'home';
+    var searchInput = document.getElementById('searchInput');
+    var searchResults = document.getElementById('searchResults');
+    var searchEmpty = document.getElementById('searchEmpty');
+    var searchCount = document.getElementById('searchCount');
+    var searchClear = document.getElementById('searchClear');
+
+    function renderSearch(raw) {
+      if (!searchResults) { return; }
+      var q = (raw || '').trim().toLowerCase();
+      var list = [];
+      for (var i = 0; i < doctors.length; i++) {
+        var d = doctors[i];
+        if (!q) { list.push(d); continue; }
+        var hosp = ((d.loc || '').split(',')[0] || '').trim();
+        var hay = (d.name + ' ' + d.spec + ' ' + (d.loc || '') + ' ' + hosp + ' ' + docCity(d)).toLowerCase();
+        if (hay.indexOf(q) >= 0) { list.push(d); }
+      }
+      var html = '';
+      for (var j = 0; j < list.length; j++) {
+        var doc = list[j];
+        html += '<button class="flex items-center gap-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-3 text-left active:scale-[0.99] transition" type="button" data-dname="' + escapeHtml(doc.name) + '">' +
+          '<img alt="' + escapeHtml(doc.name) + '" class="w-12 h-12 rounded-full object-cover object-top shrink-0 ring-2 ring-[#00647c]/15" src="' + doc.img + '" loading="lazy" decoding="async"/>' +
+          '<div class="flex-1 min-w-0">' +
+          '<h3 class="text-[13px] font-bold text-[#131b2e] truncate">' + escapeHtml(doc.name) + '</h3>' +
+          '<p class="text-[11px] font-medium text-[#131b2e]/80 mt-0.5 truncate">' + escapeHtml(doc.spec) + ' \u00b7 ' + doc.yrs + ' yrs</p>' +
+          '<p class="text-[10.5px] font-semibold text-[#6e797e] mt-0.5 truncate"><i class="fa-solid fa-location-dot text-[#00647c] mr-1"></i>' + escapeHtml(doc.loc) + '</p>' +
+          '</div>' +
+          '<span class="shrink-0 flex items-center gap-1 text-[10.5px] font-bold text-[#131b2e]"><i class="fa-solid fa-star text-amber-500"></i>' + escapeHtml(doc.rating) + '</span>' +
+          '</button>';
+      }
+      searchResults.innerHTML = html;
+      if (searchEmpty) { searchEmpty.classList.toggle('hidden', !(q && !list.length)); }
+      if (searchCount) {
+        searchCount.textContent = q ? (list.length + (list.length === 1 ? ' match' : ' matches')) : ('All doctors \u00b7 ' + list.length);
+        searchCount.classList.remove('hidden');
+      }
+      if (searchClear) {
+        searchClear.classList.toggle('hidden', !q);
+        searchClear.classList.toggle('flex', !!q);
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function () { renderSearch(searchInput.value); });
+      searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); searchInput.blur(); }
+      });
+    }
+
+    if (searchClear) {
+      searchClear.addEventListener('click', function () {
+        if (searchInput) { searchInput.value = ''; renderSearch(''); searchInput.focus(); }
+      });
+    }
+
+    var searchChips = document.querySelectorAll('.search-chip');
+    for (var sci = 0; sci < searchChips.length; sci++) {
+      searchChips[sci].addEventListener('click', function () {
+        var chipQ = this.getAttribute('data-q') || '';
+        if (searchInput) { searchInput.value = chipQ; renderSearch(chipQ); }
+      });
+    }
+
+    if (searchResults) {
+      searchResults.addEventListener('click', function (e) {
+        var card = e.target.closest('[data-dname]');
+        if (card) { openProfile(card.getAttribute('data-dname')); }
+      });
+    }
+
+    var searchBackBtn = document.getElementById('searchBack');
+    if (searchBackBtn) {
+      searchBackBtn.addEventListener('click', function () { showPage(searchFrom); });
     }
 
     // ---- Comments (TikTok-style) ----
