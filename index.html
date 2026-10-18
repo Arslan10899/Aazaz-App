@@ -58,12 +58,23 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-    .bnav-item .bnav-icon { color: #6e797e; }
-    .bnav-item .bnav-label { color: #3e484d; font-weight: 500; }
-    .bnav-item .bnav-bar { display: none; }
-    .bnav-item.active .bnav-icon { color: #00647c; }
+    .bnav-item .bnav-icon {
+      color: #6e797e;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 32px;
+      border-radius: 9999px;
+      background: transparent;
+      transition: background .22s ease, color .2s ease, transform .2s ease;
+    }
+    .bnav-item:active .bnav-icon { transform: scale(.9); }
+    .bnav-item.active .bnav-icon { color: #00647c; background: rgba(0, 100, 124, 0.12); }
+    .bnav-item .bnav-label { color: #3e484d; font-weight: 500; transition: color .2s ease; }
     .bnav-item.active .bnav-label { color: #00647c; font-weight: 700; }
-    .bnav-item.active .bnav-bar { display: block; }
+    .bnav-item .bnav-bar { display: none; }
+    .bnav-item.active .bnav-bar { display: none; }
     .bnav-item .bnav-avatar { width: 22px; height: 22px; border-radius: 9999px; object-fit: cover; object-position: top; display: block; filter: grayscale(1); opacity: 0.6; box-shadow: 0 0 0 1.5px #cbd5e1; transition: filter .2s, opacity .2s, box-shadow .2s; }
     .bnav-item.active .bnav-avatar { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px #00647c; }
   </style>
@@ -1240,7 +1251,7 @@
 </a>
 <!-- Tab 2: Hospitals -->
         <a class="bnav-item flex-1 flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition" href="#hospitals" data-navpage="hospital">
-<i class="bnav-icon fa-regular fa-hospital text-[19px] transition-colors"></i>
+<i class="bnav-icon fa-solid fa-hospital text-[19px] transition-colors"></i>
 <span class="bnav-label text-[9.5px] tracking-tight leading-none">Hospitals</span>
 <div class="bnav-bar w-6 h-[3px] bg-[#00647c] rounded-full mt-0.5"></div>
 </a>
