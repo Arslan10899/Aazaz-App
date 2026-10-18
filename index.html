@@ -1540,7 +1540,7 @@
       if (appHeader) {
         appHeader.classList.toggle('header-light', name !== 'home');
         var tabsRow = document.getElementById('headerTabs');
-        if (tabsRow) { tabsRow.classList.toggle('hidden', name === 'you'); }
+        if (tabsRow) { tabsRow.classList.toggle('hidden', name === 'you' || name.indexOf('join') === 0); }
       }
       var bnavs = document.querySelectorAll('.bnav-item');
       bnavs.forEach(function (b) {
